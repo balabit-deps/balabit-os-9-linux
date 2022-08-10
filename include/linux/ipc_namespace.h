@@ -120,6 +120,9 @@ extern int mq_init_ns(struct ipc_namespace *ns);
 static inline int mq_init_ns(struct ipc_namespace *ns) { return 0; }
 #endif
 
+extern struct ipc_namespace *get_ipc_ns_exported(struct ipc_namespace *ns);
+extern struct ipc_namespace *show_init_ipc_ns(void);
+
 #if defined(CONFIG_IPC_NS)
 extern struct ipc_namespace *copy_ipcs(unsigned long flags,
 	struct user_namespace *user_ns, struct ipc_namespace *ns);
@@ -129,6 +132,16 @@ static inline struct ipc_namespace *get_ipc_ns(struct ipc_namespace *ns)
 	if (ns)
 		refcount_inc(&ns->ns.count);
 	return ns;
+}
+
+static inline struct ipc_namespace *get_ipc_ns_not_zero(struct ipc_namespace *ns)
+{
+	if (ns) {
+		if (refcount_inc_not_zero(&ns->ns.count))
+			return ns;
+	}
+
+	return NULL;
 }
 
 extern void put_ipc_ns(struct ipc_namespace *ns);
@@ -143,6 +156,11 @@ static inline struct ipc_namespace *copy_ipcs(unsigned long flags,
 }
 
 static inline struct ipc_namespace *get_ipc_ns(struct ipc_namespace *ns)
+{
+	return ns;
+}
+
+static inline struct ipc_namespace *get_ipc_ns_not_zero(struct ipc_namespace *ns)
 {
 	return ns;
 }

@@ -287,7 +287,7 @@ static ssize_t ima_read_policy(char *path)
 	rc = kernel_read_file_from_path(path, 0, &data, INT_MAX, NULL,
 					READING_POLICY);
 	if (rc < 0) {
-		pr_err("Unable to open file: %s (%d)", path, rc);
+		pr_warn("Unable to open file: %s (%d)", path, rc);
 		return rc;
 	}
 	size = rc;
@@ -496,12 +496,12 @@ int __init ima_fs_init(void)
 
 	return 0;
 out:
+	securityfs_remove(ima_policy);
 	securityfs_remove(violations);
 	securityfs_remove(runtime_measurements_count);
 	securityfs_remove(ascii_runtime_measurements);
 	securityfs_remove(binary_runtime_measurements);
 	securityfs_remove(ima_symlink);
 	securityfs_remove(ima_dir);
-	securityfs_remove(ima_policy);
 	return -1;
 }

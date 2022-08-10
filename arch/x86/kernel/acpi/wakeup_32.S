@@ -3,6 +3,7 @@
 #include <linux/linkage.h>
 #include <asm/segment.h>
 #include <asm/page_types.h>
+#include <asm/nospec-branch.h>
 
 # Copyright 2003, 2008 Pavel Machek <pavel@suse.cz
 
@@ -37,6 +38,7 @@ SYM_CODE_START(wakeup_pmode_return)
 
 	# jump to place where we left off
 	movl	saved_eip, %eax
+	ANNOTATE_RETPOLINE_SAFE
 	jmp	*%eax
 SYM_CODE_END(wakeup_pmode_return)
 
@@ -60,7 +62,7 @@ save_registers:
 	popl	saved_context_eflags
 
 	movl	$ret_point, saved_eip
-	ret
+	RET
 
 
 restore_registers:
@@ -70,7 +72,7 @@ restore_registers:
 	movl	saved_context_edi, %edi
 	pushl	saved_context_eflags
 	popfl
-	ret
+	RET
 
 SYM_CODE_START(do_suspend_lowlevel)
 	call	save_processor_state
@@ -86,7 +88,7 @@ SYM_CODE_START(do_suspend_lowlevel)
 ret_point:
 	call	restore_registers
 	call	restore_processor_state
-	ret
+	RET
 SYM_CODE_END(do_suspend_lowlevel)
 
 .data

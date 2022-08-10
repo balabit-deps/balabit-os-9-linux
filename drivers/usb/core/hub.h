@@ -114,8 +114,7 @@ extern int usb_hub_create_port_device(struct usb_hub *hub,
 		int port1);
 extern void usb_hub_remove_port_device(struct usb_hub *hub,
 		int port1);
-extern int usb_hub_set_port_power(struct usb_device *hdev, struct usb_hub *hub,
-		int port1, bool set);
+extern int usb_hub_set_port_power(struct usb_hub *hub, int port1, bool set);
 extern struct usb_hub *usb_hub_to_struct_hub(struct usb_device *hdev);
 extern int hub_port_debounce(struct usb_hub *hub, int port1,
 		bool must_be_connected);
@@ -148,10 +147,8 @@ static inline unsigned hub_power_on_good_delay(struct usb_hub *hub)
 {
 	unsigned delay = hub->descriptor->bPwrOn2PwrGood * 2;
 
-	if (!hub->hdev->parent)	/* root hub */
-		return delay;
-	else /* Wait at least 100 msec for power to become stable */
-		return max(delay, 100U);
+	/* Wait at least 100 msec for power to become stable */
+	return max(delay, 100U);
 }
 
 static inline int hub_port_debounce_be_connected(struct usb_hub *hub,

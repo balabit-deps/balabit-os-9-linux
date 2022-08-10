@@ -653,7 +653,8 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
 		aspm_calc_l1ss_info(link, parent_l1ss_cap, child_l1ss_cap);
 
 	/* Save default state */
-	link->aspm_default = link->aspm_enabled;
+	link->aspm_default = parent->dev_flags & PCI_DEV_FLAGS_ENABLE_ASPM ?
+			     ASPM_STATE_ALL : link->aspm_enabled;
 
 	/* Setup initial capable state. Will be updated later */
 	link->aspm_capable = link->aspm_support;
@@ -1200,6 +1201,17 @@ bool pcie_aspm_enabled(struct pci_dev *pdev)
 	return link->aspm_enabled;
 }
 EXPORT_SYMBOL_GPL(pcie_aspm_enabled);
+
+bool pcie_aspm_capable(struct pci_dev *pdev)
+{
+	struct pcie_link_state *link = pcie_aspm_get_link(pdev);
+
+	if (!link)
+		return false;
+
+	return link->aspm_capable;
+}
+EXPORT_SYMBOL_GPL(pcie_aspm_capable);
 
 static ssize_t aspm_attr_show_common(struct device *dev,
 				     struct device_attribute *attr,

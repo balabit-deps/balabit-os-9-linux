@@ -96,6 +96,7 @@ enum dmub_asic {
 	DMUB_ASIC_DCN302,
 	DMUB_ASIC_DCN303,
 	DMUB_ASIC_DCN31,
+	DMUB_ASIC_DCN31B,
 	DMUB_ASIC_MAX,
 };
 
@@ -118,6 +119,7 @@ enum dmub_notification_type {
 	DMUB_NOTIFICATION_AUX_REPLY,
 	DMUB_NOTIFICATION_HPD,
 	DMUB_NOTIFICATION_HPD_IRQ,
+	DMUB_NOTIFICATION_SET_CONFIG_REPLY,
 	DMUB_NOTIFICATION_MAX
 };
 
@@ -235,6 +237,8 @@ struct dmub_srv_hw_params {
 	bool load_inst_const;
 	bool skip_panel_power_sequence;
 	bool disable_z10;
+	bool dpia_supported;
+	bool disable_dpia;
 };
 
 /**
@@ -437,6 +441,7 @@ struct dmub_notification {
 	union {
 		struct aux_reply_data aux_reply;
 		enum dp_hpd_status hpd_status;
+		enum set_config_status sc_status;
 	};
 };
 

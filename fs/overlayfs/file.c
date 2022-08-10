@@ -17,6 +17,7 @@
 
 struct ovl_aio_req {
 	struct kiocb iocb;
+	refcount_t ref;
 	struct kiocb *orig_iocb;
 	struct fd fd;
 };
@@ -39,6 +40,7 @@ static char ovl_whatisit(struct inode *inode, struct inode *realinode)
 static struct file *ovl_open_realfile(const struct file *file,
 				      struct inode *realinode)
 {
+	struct path realpath;
 	struct inode *inode = file_inode(file);
 	struct file *realfile;
 	const struct cred *old_cred;
@@ -57,7 +59,8 @@ static struct file *ovl_open_realfile(const struct file *file,
 		if (!inode_owner_or_capable(&init_user_ns, realinode))
 			flags &= ~O_NOATIME;
 
-		realfile = open_with_fake_path(&file->f_path, flags, realinode,
+		ovl_path_real(file->f_path.dentry, &realpath);
+		realfile = open_with_fake_path(&realpath, flags, realinode,
 					       current_cred());
 	}
 	revert_creds(old_cred);
@@ -252,6 +255,14 @@ static rwf_t ovl_iocb_to_rwf(int ifl)
 	return flags;
 }
 
+static inline void ovl_aio_put(struct ovl_aio_req *aio_req)
+{
+	if (refcount_dec_and_test(&aio_req->ref)) {
+		fdput(aio_req->fd);
+		kmem_cache_free(ovl_aio_request_cachep, aio_req);
+	}
+}
+
 static void ovl_aio_cleanup_handler(struct ovl_aio_req *aio_req)
 {
 	struct kiocb *iocb = &aio_req->iocb;
@@ -268,8 +279,7 @@ static void ovl_aio_cleanup_handler(struct ovl_aio_req *aio_req)
 	}
 
 	orig_iocb->ki_pos = iocb->ki_pos;
-	fdput(aio_req->fd);
-	kmem_cache_free(ovl_aio_request_cachep, aio_req);
+	ovl_aio_put(aio_req);
 }
 
 static void ovl_aio_rw_complete(struct kiocb *iocb, long res, long res2)
@@ -319,7 +329,9 @@ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
 		aio_req->orig_iocb = iocb;
 		kiocb_clone(&aio_req->iocb, iocb, real.file);
 		aio_req->iocb.ki_complete = ovl_aio_rw_complete;
+		refcount_set(&aio_req->ref, 2);
 		ret = vfs_iocb_iter_read(real.file, &aio_req->iocb, iter);
+		ovl_aio_put(aio_req);
 		if (ret != -EIOCBQUEUED)
 			ovl_aio_cleanup_handler(aio_req);
 	}
@@ -390,7 +402,9 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
 		kiocb_clone(&aio_req->iocb, iocb, real.file);
 		aio_req->iocb.ki_flags = ifl;
 		aio_req->iocb.ki_complete = ovl_aio_rw_complete;
+		refcount_set(&aio_req->ref, 2);
 		ret = vfs_iocb_iter_write(real.file, &aio_req->iocb, iter);
+		ovl_aio_put(aio_req);
 		if (ret != -EIOCBQUEUED)
 			ovl_aio_cleanup_handler(aio_req);
 	}
@@ -476,6 +490,39 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
 	return ret;
 }
 
+#if IS_ENABLED(CONFIG_AUFS_FS)
+/*
+ * In map_files_get_link() (fs/proc/base.c)
+ * we need to determine correct path from overlayfs.
+ * But real_mount(realfile->f_path.mnt) may be not
+ * equal to real_mount(file->f_path.mnt). In such case
+ * fdinfo of the same file which was opened from
+ * /proc/<pid>/map_files/... and "usual" path
+ * will show different mnt_id.
+ *
+ * We solve issue like in aufs by using additional
+ * field on struct vm_area_struct called "vm_prfile"
+ * which is used only for fdinfo/"printing" needs.
+ *
+ * See also mm/prfile.c
+ */
+static void ovl_vm_prfile_set(struct vm_area_struct *vma,
+			      struct file *file)
+{
+	get_file(file);
+	vma->vm_prfile = file;
+#ifndef CONFIG_MMU
+	get_file(file);
+	vma->vm_region->vm_prfile = file;
+#endif
+}
+#else /* !CONFIG_AUFS_FS */
+static void ovl_vm_prfile_set(struct vm_area_struct *vma,
+			      struct file *file)
+{
+}
+#endif/* CONFIG_AUFS_FS */
+
 static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
 {
 	struct file *realfile = file->private_data;
@@ -493,6 +540,10 @@ static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
 	ret = call_mmap(vma->vm_file, vma);
 	revert_creds(old_cred);
+
+	if (!ret)
+		ovl_vm_prfile_set(vma, file);
+
 	ovl_file_accessed(file);
 
 	return ret;

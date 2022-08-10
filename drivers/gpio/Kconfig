@@ -353,6 +353,17 @@ config GPIO_IXP4XX
 	  IXP4xx series of chips.
 
 	  If unsure, say N.
+
+config GPIO_LJCA
+	tristate "INTEL La Jolla Cove Adapter GPIO support"
+	depends on MFD_LJCA
+	help
+	  Select this option to enable GPIO driver for the INTEL
+	  La Jolla Cove Adapter (LJCA) board.
+
+	  This driver can also be built as a module. If so, the module
+	  will be called gpio-ljca.
+
 config GPIO_LOGICVC
 	tristate "Xylon LogiCVC GPIO support"
 	depends on MFD_SYSCON && OF
@@ -523,6 +534,7 @@ config GPIO_REG
 config GPIO_ROCKCHIP
 	tristate "Rockchip GPIO support"
 	depends on ARCH_ROCKCHIP || COMPILE_TEST
+	select GENERIC_IRQ_CHIP
 	select GPIOLIB_IRQCHIP
 	default ARCH_ROCKCHIP
 	help
@@ -1461,6 +1473,18 @@ endmenu
 
 menu "PCI GPIO expanders"
 	depends on PCI
+
+config GPIO_AAEON
+	tristate "AAEON GPIO support"
+	depends on ASUS_WMI
+	depends on UBUNTU_ODM_DRIVERS
+	select MFD_AAEON
+	help
+	  Say yes here to support GPIO pins on Single Board Computers produced
+	  by AAEON.
+
+	  This driver leverages the ASUS WMI interface to access device
+	  resources.
 
 config GPIO_AMD8111
 	tristate "AMD 8111 GPIO driver"

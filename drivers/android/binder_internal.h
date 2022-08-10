@@ -5,6 +5,7 @@
 
 #include <linux/export.h>
 #include <linux/fs.h>
+#include <linux/kconfig.h>
 #include <linux/list.h>
 #include <linux/miscdevice.h>
 #include <linux/mutex.h>
@@ -77,7 +78,7 @@ extern const struct file_operations binder_fops;
 
 extern char *binder_devices_param;
 
-#ifdef CONFIG_ANDROID_BINDERFS
+#if IS_ENABLED(CONFIG_ANDROID_BINDERFS)
 extern bool is_binderfs_device(const struct inode *inode);
 extern struct dentry *binderfs_create_file(struct dentry *dir, const char *name,
 					   const struct file_operations *fops,
@@ -98,7 +99,7 @@ static inline struct dentry *binderfs_create_file(struct dentry *dir,
 static inline void binderfs_remove_file(struct dentry *dentry) {}
 #endif
 
-#ifdef CONFIG_ANDROID_BINDERFS
+#if IS_ENABLED(CONFIG_ANDROID_BINDERFS)
 extern int __init init_binderfs(void);
 #else
 static inline int __init init_binderfs(void)
@@ -364,6 +365,9 @@ struct binder_ref {
  *                        (invariant after initialized)
  * @tsk                   task_struct for group_leader of process
  *                        (invariant after initialized)
+ * @cred                  struct cred associated with the `struct file`
+ *                        in binder_open()
+ *                        (invariant after initialized)
  * @deferred_work_node:   element for binder_deferred_list
  *                        (protected by binder_deferred_lock)
  * @deferred_work:        bitmap of deferred work to perform
@@ -426,6 +430,7 @@ struct binder_proc {
 	struct list_head waiting_threads;
 	int pid;
 	struct task_struct *tsk;
+	const struct cred *cred;
 	struct hlist_node deferred_work_node;
 	int deferred_work;
 	int outstanding_txns;

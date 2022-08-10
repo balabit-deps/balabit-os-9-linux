@@ -3094,7 +3094,7 @@ static int qm_alloc_uacce(struct hisi_qm *qm)
 	if (IS_ERR(uacce))
 		return PTR_ERR(uacce);
 
-	if (uacce->flags & UACCE_DEV_SVA && qm->mode == UACCE_MODE_SVA) {
+	if (uacce->flags & UACCE_DEV_SVA) {
 		qm->use_sva = true;
 	} else {
 		/* only consider sva case */
@@ -3367,8 +3367,10 @@ void hisi_qm_uninit(struct hisi_qm *qm)
 
 	qm_irq_unregister(qm);
 	hisi_qm_pci_uninit(qm);
-	uacce_remove(qm->uacce);
-	qm->uacce = NULL;
+	if (qm->use_sva) {
+		uacce_remove(qm->uacce);
+		qm->uacce = NULL;
+	}
 
 	up_write(&qm->qps_lock);
 }
@@ -4107,7 +4109,7 @@ static void qm_vf_get_qos(struct hisi_qm *qm, u32 fun_num)
 static int qm_vf_read_qos(struct hisi_qm *qm)
 {
 	int cnt = 0;
-	int ret;
+	int ret = -EINVAL;
 
 	/* reset mailbox qos val */
 	qm->mb_qos = 0;
@@ -5777,9 +5779,11 @@ int hisi_qm_init(struct hisi_qm *qm)
 			goto err_irq_register;
 	}
 
-	ret = qm_alloc_uacce(qm);
-	if (ret < 0)
-		dev_warn(dev, "fail to alloc uacce (%d)\n", ret);
+	if (qm->mode == UACCE_MODE_SVA) {
+		ret = qm_alloc_uacce(qm);
+		if (ret < 0)
+			dev_warn(dev, "fail to alloc uacce (%d)\n", ret);
+	}
 
 	ret = hisi_qm_memory_init(qm);
 	if (ret)
@@ -5792,8 +5796,10 @@ int hisi_qm_init(struct hisi_qm *qm)
 	return 0;
 
 err_alloc_uacce:
-	uacce_remove(qm->uacce);
-	qm->uacce = NULL;
+	if (qm->use_sva) {
+		uacce_remove(qm->uacce);
+		qm->uacce = NULL;
+	}
 err_irq_register:
 	qm_irq_unregister(qm);
 err_pci_init:
@@ -5986,7 +5992,7 @@ int hisi_qm_resume(struct device *dev)
 	if (ret)
 		pci_err(pdev, "failed to start qm(%d)\n", ret);
 
-	return 0;
+	return ret;
 }
 EXPORT_SYMBOL_GPL(hisi_qm_resume);
 

@@ -1891,8 +1891,10 @@ subscribe_event_xa_alloc(struct mlx5_devx_event_table *devx_event_table,
 				key_level2,
 				obj_event,
 				GFP_KERNEL);
-		if (err)
+		if (err) {
+			kfree(obj_event);
 			return err;
+		}
 		INIT_LIST_HEAD(&obj_event->obj_sub_list);
 	}
 
@@ -2175,7 +2177,7 @@ static int devx_umem_get(struct mlx5_ib_dev *dev, struct ib_ucontext *ucontext,
 	if (err)
 		return err;
 
-	obj->umem = ib_umem_get(&dev->ib_dev, addr, size, access);
+	obj->umem = ib_umem_get_peer(&dev->ib_dev, addr, size, access, 0);
 	if (IS_ERR(obj->umem))
 		return PTR_ERR(obj->umem);
 	return 0;
@@ -2264,6 +2266,8 @@ static int devx_umem_reg_cmd_alloc(struct mlx5_ib_dev *dev,
 		 order_base_2(page_size) - MLX5_ADAPTER_PAGE_SHIFT);
 	MLX5_SET(umem, umem, page_offset,
 		 ib_umem_dma_offset(obj->umem, page_size));
+	if (obj->umem->is_peer)
+		MLX5_SET(umem, umem, ats, MLX5_CAP_GEN(dev->mdev, ats));
 
 	mlx5_ib_populate_pas(obj->umem, page_size, mtt,
 			     (obj->umem->writable ? MLX5_IB_MTT_WRITE : 0) |

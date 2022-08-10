@@ -23,6 +23,9 @@
 #include "hw-me-regs.h"
 #include "hw-me.h"
 
+static bool disable_msi;
+module_param(disable_msi, bool, 0);
+
 /* mei_pci_tbl - PCI Device ID Table */
 static const struct pci_device_id mei_me_pci_tbl[] = {
 	{MEI_PCI_DEVICE(MEI_DEV_ID_82946GZ, MEI_ME_ICH_CFG)},
@@ -113,6 +116,7 @@ static const struct pci_device_id mei_me_pci_tbl[] = {
 	{MEI_PCI_DEVICE(MEI_DEV_ID_ADP_S, MEI_ME_PCH15_CFG)},
 	{MEI_PCI_DEVICE(MEI_DEV_ID_ADP_LP, MEI_ME_PCH15_CFG)},
 	{MEI_PCI_DEVICE(MEI_DEV_ID_ADP_P, MEI_ME_PCH15_CFG)},
+	{MEI_PCI_DEVICE(MEI_DEV_ID_ADP_N, MEI_ME_PCH15_CFG)},
 
 	/* required last entry */
 	{0, }
@@ -215,7 +219,8 @@ static int mei_me_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 	hw->mem_addr = pcim_iomap_table(pdev)[0];
 	hw->read_fws = mei_me_read_fws;
 
-	pci_enable_msi(pdev);
+	if (!disable_msi)
+		pci_enable_msi(pdev);
 
 	hw->irq = pdev->irq;
 

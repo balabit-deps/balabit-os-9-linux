@@ -391,8 +391,10 @@ static void rtw_ops_bss_info_changed(struct ieee80211_hw *hw,
 			coex_stat->wl_beacon_interval = conf->beacon_int;
 	}
 
-	if (changed & BSS_CHANGED_BEACON)
+	if (changed & BSS_CHANGED_BEACON) {
+		rtw_set_dtim_period(rtwdev, conf->dtim_period);
 		rtw_fw_download_rsvd_page(rtwdev);
+	}
 
 	if (changed & BSS_CHANGED_BEACON_ENABLED) {
 		if (conf->enable_beacon)
@@ -414,6 +416,18 @@ static void rtw_ops_bss_info_changed(struct ieee80211_hw *hw,
 	rtw_vif_port_config(rtwdev, rtwvif, config);
 
 	mutex_unlock(&rtwdev->mutex);
+}
+
+static int rtw_ops_start_ap(struct ieee80211_hw *hw, struct ieee80211_vif *vif)
+{
+	struct rtw_dev *rtwdev = hw->priv;
+	struct rtw_chip_info *chip = rtwdev->chip;
+
+	mutex_lock(&rtwdev->mutex);
+	chip->ops->phy_calibration(rtwdev);
+	mutex_unlock(&rtwdev->mutex);
+
+	return 0;
 }
 
 static int rtw_ops_conf_tx(struct ieee80211_hw *hw,
@@ -458,6 +472,18 @@ static int rtw_ops_sta_remove(struct ieee80211_hw *hw,
 	rtw_fw_beacon_filter_config(rtwdev, false, vif);
 	mutex_lock(&rtwdev->mutex);
 	rtw_sta_remove(rtwdev, sta, true);
+	mutex_unlock(&rtwdev->mutex);
+
+	return 0;
+}
+
+static int rtw_ops_set_tim(struct ieee80211_hw *hw, struct ieee80211_sta *sta,
+			   bool set)
+{
+	struct rtw_dev *rtwdev = hw->priv;
+
+	mutex_lock(&rtwdev->mutex);
+	rtw_fw_download_rsvd_page(rtwdev);
 	mutex_unlock(&rtwdev->mutex);
 
 	return 0;
@@ -709,7 +735,7 @@ static void rtw_ra_mask_info_update_iter(void *data, struct ieee80211_sta *sta)
 	}
 
 	si->use_cfg_mask = true;
-	rtw_update_sta_info(br_data->rtwdev, si);
+	rtw_update_sta_info(br_data->rtwdev, si, true);
 }
 
 static void rtw_ra_mask_info_update(struct rtw_dev *rtwdev,
@@ -815,6 +841,17 @@ static void rtw_reconfig_complete(struct ieee80211_hw *hw,
 	mutex_unlock(&rtwdev->mutex);
 }
 
+static void rtw_ops_sta_rc_update(struct ieee80211_hw *hw,
+				  struct ieee80211_vif *vif,
+				  struct ieee80211_sta *sta, u32 changed)
+{
+	struct rtw_dev *rtwdev = hw->priv;
+	struct rtw_sta_info *si = (struct rtw_sta_info *)sta->drv_priv;
+
+	if (changed & IEEE80211_RC_BW_CHANGED)
+		rtw_update_sta_info(rtwdev, si, true);
+}
+
 const struct ieee80211_ops rtw_ops = {
 	.tx			= rtw_ops_tx,
 	.wake_tx_queue		= rtw_ops_wake_tx_queue,
@@ -826,9 +863,11 @@ const struct ieee80211_ops rtw_ops = {
 	.change_interface	= rtw_ops_change_interface,
 	.configure_filter	= rtw_ops_configure_filter,
 	.bss_info_changed	= rtw_ops_bss_info_changed,
+	.start_ap		= rtw_ops_start_ap,
 	.conf_tx		= rtw_ops_conf_tx,
 	.sta_add		= rtw_ops_sta_add,
 	.sta_remove		= rtw_ops_sta_remove,
+	.set_tim		= rtw_ops_set_tim,
 	.set_key		= rtw_ops_set_key,
 	.ampdu_action		= rtw_ops_ampdu_action,
 	.can_aggregate_in_amsdu	= rtw_ops_can_aggregate_in_amsdu,
@@ -842,6 +881,7 @@ const struct ieee80211_ops rtw_ops = {
 	.set_antenna		= rtw_ops_set_antenna,
 	.get_antenna		= rtw_ops_get_antenna,
 	.reconfig_complete	= rtw_reconfig_complete,
+	.sta_rc_update		= rtw_ops_sta_rc_update,
 #ifdef CONFIG_PM
 	.suspend		= rtw_ops_suspend,
 	.resume			= rtw_ops_resume,

@@ -47,6 +47,15 @@
 #define AMDGPU_DM_MAX_CRTC 6
 
 #define AMDGPU_DM_MAX_NUM_EDP 2
+
+#define AMDGPU_DMUB_NOTIFICATION_MAX 5
+
+/**
+ * DMUB Async to Sync Mechanism Status
+ **/
+#define DMUB_ASYNC_TO_SYNC_ACCESS_FAIL 1
+#define DMUB_ASYNC_TO_SYNC_ACCESS_TIMEOUT 2
+#define DMUB_ASYNC_TO_SYNC_ACCESS_SUCCESS 3
 /*
 #include "include/amdgpu_dal_power_if.h"
 #include "amdgpu_dm_irq.h"
@@ -84,6 +93,21 @@ struct dm_compressor_info {
 	void *cpu_addr;
 	struct amdgpu_bo *bo_ptr;
 	uint64_t gpu_addr;
+};
+
+typedef void (*dmub_notify_interrupt_callback_t)(struct amdgpu_device *adev, struct dmub_notification *notify);
+
+/**
+ * struct dmub_hpd_work - Handle time consuming work in low priority outbox IRQ
+ *
+ * @handle_hpd_work: Work to be executed in a separate thread to handle hpd_low_irq
+ * @dmub_notify:  notification for callback function
+ * @adev: amdgpu_device pointer
+ */
+struct dmub_hpd_work {
+	struct work_struct handle_hpd_work;
+	struct dmub_notification *dmub_notify;
+	struct amdgpu_device *adev;
 };
 
 /**
@@ -190,7 +214,29 @@ struct amdgpu_display_manager {
 	 */
 	struct dmub_srv *dmub_srv;
 
+	/**
+	 * @dmub_notify:
+	 *
+	 * Notification from DMUB.
+	 */
+
 	struct dmub_notification *dmub_notify;
+
+	/**
+	 * @dmub_callback:
+	 *
+	 * Callback functions to handle notification from DMUB.
+	 */
+
+	dmub_notify_interrupt_callback_t dmub_callback[AMDGPU_DMUB_NOTIFICATION_MAX];
+
+	/**
+	 * @dmub_thread_offload:
+	 *
+	 * Flag to indicate if callback is offload.
+	 */
+
+	bool dmub_thread_offload[AMDGPU_DMUB_NOTIFICATION_MAX];
 
 	/**
 	 * @dmub_fb_info:
@@ -439,6 +485,7 @@ struct amdgpu_display_manager {
 	 */
 	struct list_head da_list;
 	struct completion dmub_aux_transfer_done;
+	struct workqueue_struct *delayed_hpd_wq;
 
 	/**
 	 * @brightness:
@@ -446,6 +493,12 @@ struct amdgpu_display_manager {
 	 * cached backlight values.
 	 */
 	u32 brightness[AMDGPU_DM_MAX_NUM_EDP];
+	/**
+	 * @actual_brightness:
+	 *
+	 * last successfully applied backlight values.
+	 */
+	u32 actual_brightness[AMDGPU_DM_MAX_NUM_EDP];
 };
 
 enum dsc_clock_force_state {
@@ -632,6 +685,7 @@ void amdgpu_dm_update_connector_after_detect(
 
 extern const struct drm_encoder_helper_funcs amdgpu_dm_encoder_helper_funcs;
 
-int amdgpu_dm_process_dmub_aux_transfer_sync(struct dc_context *ctx, unsigned int linkIndex,
-					struct aux_payload *payload, enum aux_return_code_type *operation_result);
+int amdgpu_dm_process_dmub_aux_transfer_sync(bool is_cmd_aux,
+					struct dc_context *ctx, unsigned int link_index,
+					void *payload, void *operation_result);
 #endif /* __AMDGPU_DM_H__ */
