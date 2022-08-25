@@ -11016,7 +11016,7 @@ CONFIG_UBIFS_FS_ZLIB                            policy<{'amd64': 'y', 'arm64': '
 CONFIG_UBIFS_FS_ZSTD                            policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y'}>
 
 # Menu: File systems >> Miscellaneous filesystems >> AUFS
-CONFIG_AUFS_FS                                  policy<{'amd64': 'n', 'arm64': 'n', 'armhf': 'n', 'ppc64el': 'n', 's390x', 'n'}>
+CONFIG_AUFS_FS                                  policy<{'amd64': 'm', 'arm64': 'n', 'armhf': 'n', 'ppc64el': 'n', 's390x', 'n'}>
 
 # Menu: File systems >> Native language support
 CONFIG_NLS                                      policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
