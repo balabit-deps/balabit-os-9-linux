@@ -46,7 +46,7 @@ CONFIG_AUTOFS_FS=y
 # CONFIG_CAIF is not set
 # CONFIG_CAN is not set
 # CONFIG_CB710_CORE is not set
-CONFIG_CC_VERSION_TEXT="s390x-linux-gnu-gcc (Ubuntu 11.2.0-17ubuntu1) 11.2.0"
+CONFIG_CC_VERSION_TEXT="s390x-linux-gnu-gcc (Ubuntu 11.3.0-1ubuntu1~22.04) 11.3.0"
 # CONFIG_CDROM_PKTCDVD is not set
 CONFIG_CMA=y
 # CONFIG_CMDLINE_PARTITION is not set
@@ -475,7 +475,6 @@ CONFIG_PTP_1588_CLOCK_OPTIONAL=m
 # CONFIG_QRTR is not set
 # CONFIG_RAPIDIO is not set
 # CONFIG_RAVE_SP_CORE is not set
-CONFIG_RCU_CPU_STALL_TIMEOUT=21
 # CONFIG_RC_CORE is not set
 # CONFIG_REGULATOR is not set
 # CONFIG_REISERFS_FS is not set
