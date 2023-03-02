@@ -535,7 +535,7 @@ void dcn30_init_hw(struct dc *dc)
 
 	/* we want to turn off all dp displays before doing detection */
 	if (dc->config.power_down_display_on_boot)
-		blank_all_dp_displays(dc, true);
+		dc_link_blank_all_dp_displays(dc);
 
 	if (hws->funcs.enable_power_gating_plane)
 		hws->funcs.enable_power_gating_plane(dc->hwseq, true);

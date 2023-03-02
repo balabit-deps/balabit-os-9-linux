@@ -531,7 +531,6 @@ bh1780
 binder_linux
 binfmt_misc
 blake2b_generic
-blake2s_generic
 block2mtd
 blocklayoutdriver
 blowfish_common
@@ -2037,6 +2036,7 @@ inv-mpu6050-spi
 io_edgeport
 io_ti
 ionic
+iosm
 iova
 iowarrior
 ip6_gre
