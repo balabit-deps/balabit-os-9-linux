@@ -67,9 +67,11 @@ endif
 #
 ifeq ($(CONFIG_MODULE_SIG_ALL),y)
 quiet_cmd_sign = SIGN    $@
-$(eval $(call config_filename,MODULE_SIG_KEY))
-      cmd_sign = scripts/sign-file $(CONFIG_MODULE_SIG_HASH) $(MODULE_SIG_KEY_SRCPREFIX)$(CONFIG_MODULE_SIG_KEY) certs/signing_key.x509 $@ \
-                 $(if $(KBUILD_EXTMOD),|| true)
+      cmd_sign = if test -e $(srctree)/debian/scripts/sign-module && \
+                    $(srctree)/debian/scripts/sign-module $@ ; \
+                 then scripts/sign-file $(CONFIG_MODULE_SIG_HASH) $(MODULE_SIG_KEY_SRCPREFIX)$(CONFIG_MODULE_SIG_KEY) certs/signing_key.x509 $@ \
+                      $(if $(KBUILD_EXTMOD),|| true) ; \
+                 fi
 else
 quiet_cmd_sign :=
       cmd_sign := :
