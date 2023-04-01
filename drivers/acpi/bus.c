@@ -283,6 +283,8 @@ EXPORT_SYMBOL_GPL(osc_pc_lpi_support_confirmed);
 bool osc_sb_native_usb4_support_confirmed;
 EXPORT_SYMBOL_GPL(osc_sb_native_usb4_support_confirmed);
 
+bool osc_sb_cppc2_support_acked;
+
 static u8 sb_uuid_str[] = "0811B06E-4A27-44F9-8D60-3CBBC22E7B48";
 static void acpi_bus_osc_negotiate_platform_control(void)
 {
@@ -312,10 +314,11 @@ static void acpi_bus_osc_negotiate_platform_control(void)
 #endif
 #ifdef CONFIG_X86
 	capbuf[OSC_SUPPORT_DWORD] |= OSC_SB_GENERIC_INITIATOR_SUPPORT;
-	if (boot_cpu_has(X86_FEATURE_HWP)) {
-		capbuf[OSC_SUPPORT_DWORD] |= OSC_SB_CPC_SUPPORT;
-		capbuf[OSC_SUPPORT_DWORD] |= OSC_SB_CPCV2_SUPPORT;
-	}
+#endif
+
+#ifdef CONFIG_ACPI_CPPC_LIB
+	capbuf[OSC_SUPPORT_DWORD] |= OSC_SB_CPC_SUPPORT;
+	capbuf[OSC_SUPPORT_DWORD] |= OSC_SB_CPCV2_SUPPORT;
 #endif
 
 	if (IS_ENABLED(CONFIG_SCHED_MC_PRIO))
@@ -351,6 +354,10 @@ static void acpi_bus_osc_negotiate_platform_control(void)
 
 	capbuf_ret = context.ret.pointer;
 	if (context.ret.length > OSC_SUPPORT_DWORD) {
+#ifdef CONFIG_ACPI_CPPC_LIB
+		osc_sb_cppc2_support_acked = capbuf_ret[OSC_SUPPORT_DWORD] & OSC_SB_CPCV2_SUPPORT;
+#endif
+
 		osc_sb_apei_support_acked =
 			capbuf_ret[OSC_SUPPORT_DWORD] & OSC_SB_APEI_SUPPORT;
 		osc_pc_lpi_support_confirmed =
