@@ -1,3 +1,9 @@
+linux (5.15.0-71.78bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Sat, 29 Apr 2023 04:27:05 +0200
+
 linux (5.15.0-71.78) jammy; urgency=medium
 
   * jammy/linux: 5.15.0-71.78 -proposed tracker (LP: #2016820)
