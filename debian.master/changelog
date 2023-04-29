@@ -1,3 +1,17 @@
+linux (5.15.0-71.78) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-71.78 -proposed tracker (LP: #2016820)
+
+  * CVE-2023-1872
+    - io_uring: add missing lock in io_get_file_fixed
+    - io_uring: ensure that io_init_req() passes in the right issue_flags
+
+  * CVE-2023-1829
+    - net/sched: Retire tcindex classifier
+    - [Config]: Make sure CONFIG_NET_CLS_TCINDEX is not available
+
+ -- Thadeu Lima de Souza Cascardo <cascardo@canonical.com>  Tue, 18 Apr 2023 05:37:02 -0300
+
 linux (5.15.0-70.77bb1) jammy; urgency=medium
 
   * Balabit patched version
