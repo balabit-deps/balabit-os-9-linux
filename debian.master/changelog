@@ -1,3 +1,27 @@
+linux (5.15.0-73.80) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-73.80 -proposed tracker (LP: #2019647)
+
+  * CVE-2023-32233
+    - netfilter: nf_tables: deactivate anonymous set from preparation phase
+
+  * CVE-2023-2612
+    - SAUCE: shiftfs: prevent lock unbalance in shiftfs_create_object()
+
+  * CVE-2023-31436
+    - net: sched: sch_qfq: prevent slab-out-of-bounds in qfq_activate_agg
+
+  * CVE-2023-1380
+    - wifi: brcmfmac: slab-out-of-bounds read in brcmf_get_assoc_ies()
+
+  * CVE-2023-30456
+    - KVM: nVMX: add missing consistency checks for CR0 and CR4
+
+  * Packaging resync (LP: #1786013)
+    - [Packaging] update helper scripts
+
+ -- Thadeu Lima de Souza Cascardo <cascardo@canonical.com>  Mon, 15 May 2023 10:10:08 -0300
+
 linux (5.15.0-72.79bb1) jammy; urgency=medium
 
   * Balabit patched version
