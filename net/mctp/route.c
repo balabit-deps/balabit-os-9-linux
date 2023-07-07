@@ -418,7 +418,7 @@ static int mctp_route_output(struct mctp_route *route, struct sk_buff *skb)
 static void mctp_route_release(struct mctp_route *rt)
 {
 	if (refcount_dec_and_test(&rt->refs)) {
-		dev_put(rt->dev->dev);
+		mctp_dev_put(rt->dev);
 		kfree_rcu(rt, rcu);
 	}
 }
@@ -747,7 +747,7 @@ static int mctp_route_add(struct mctp_dev *mdev, mctp_eid_t daddr_start,
 	rt->max = daddr_start + daddr_extent;
 	rt->mtu = mtu;
 	rt->dev = mdev;
-	dev_hold(rt->dev->dev);
+	mctp_dev_hold(rt->dev);
 	rt->type = type;
 	rt->output = rtfn;
 
@@ -828,13 +828,18 @@ static int mctp_pkttype_receive(struct sk_buff *skb, struct net_device *dev,
 				struct net_device *orig_dev)
 {
 	struct net *net = dev_net(dev);
+	struct mctp_dev *mdev;
 	struct mctp_skb_cb *cb;
 	struct mctp_route *rt;
 	struct mctp_hdr *mh;
 
-	/* basic non-data sanity checks */
-	if (dev->type != ARPHRD_MCTP)
+	rcu_read_lock();
+	mdev = __mctp_dev_get(dev);
+	rcu_read_unlock();
+	if (!mdev) {
+		/* basic non-data sanity checks */
 		goto err_drop;
+	}
 
 	if (!pskb_may_pull(skb, sizeof(struct mctp_hdr)))
 		goto err_drop;
@@ -848,20 +853,20 @@ static int mctp_pkttype_receive(struct sk_buff *skb, struct net_device *dev,
 		goto err_drop;
 
 	cb = __mctp_cb(skb);
-	rcu_read_lock();
-	cb->net = READ_ONCE(__mctp_dev_get(dev)->net);
-	rcu_read_unlock();
+	cb->net = READ_ONCE(mdev->net);
 
 	rt = mctp_route_lookup(net, cb->net, mh->dest);
 	if (!rt)
 		goto err_drop;
 
 	mctp_do_route(rt, skb);
+	mctp_dev_put(mdev);
 
 	return NET_RX_SUCCESS;
 
 err_drop:
 	kfree_skb(skb);
+	mctp_dev_put(mdev);
 	return NET_RX_DROP;
 }
 
