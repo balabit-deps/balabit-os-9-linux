@@ -7,7 +7,6 @@
 8021q
 8139cp
 8139too
-8250_aspeed_vuart
 8250_dw
 8250_exar
 8250_men_mcb
@@ -3202,7 +3201,6 @@ nouveau
 nozomi
 npcm750-pwm-fan
 nps_enet
-ns
 ns558
 ns83820
 nsh
