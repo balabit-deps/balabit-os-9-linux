@@ -567,6 +567,15 @@ CONFIG_SERIAL_DEV_CTRL_TTYPORT                  note<'LP:1739939'>
 CONFIG_SERIAL_MULTI_INSTANTIATE                 policy<{'amd64': 'm'}>
 CONFIG_SERIAL_MULTI_INSTANTIATE                 note<'LP:#1965496'>
 
+CONFIG_SERIAL_SH_SCI                            policy<{'arm64': 'y', 'armhf': 'y'}>
+CONFIG_SERIAL_SH_SCI                            note<'LP: #2022361'>
+
+CONFIG_SERIAL_SH_SCI_CONSOLE                    policy<{'arm64': 'y', 'armhf': 'y'}>
+CONFIG_SERIAL_SH_SCI_CONSOLE                    note<'LP: #2022361'>
+
+CONFIG_SERIAL_SH_SCI_EARLYCON                   policy<{'arm64': 'y', 'armhf': 'y'}>
+CONFIG_SERIAL_SH_SCI_EARLYCON                   note<'LP: #2022361'>
+
 CONFIG_SETEND_EMULATION                         policy<{'arm64': 'y'}>
 CONFIG_SETEND_EMULATION                         note<'LP:1545542'>
 
@@ -2106,7 +2115,6 @@ CONFIG_BLK_DEV_RNBD                             policy<{'amd64': 'y', 'arm64': '
 CONFIG_BLK_DEV_RNBD_CLIENT                      policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm', 's390x': 'm'}>
 CONFIG_BLK_DEV_RNBD_SERVER                      policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm', 's390x': 'm'}>
 CONFIG_BLK_DEV_RSXX                             policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm', 's390x': 'n'}>
-CONFIG_BLK_DEV_SX8                              policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm', 's390x': 'n'}>
 CONFIG_BLK_DEV_THROTTLING_LOW                   policy<{'amd64': 'n', 'arm64': 'n', 'armhf': 'n', 'ppc64el': 'n', 's390x': 'n'}>
 CONFIG_BLK_DEV_ZONED                            policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
 CONFIG_BLK_INLINE_ENCRYPTION                    policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
@@ -3063,6 +3071,7 @@ CONFIG_CPU_PJ4B                                 policy<{'armhf': 'y'}>
 CONFIG_CPU_PM                                   policy<{'arm64': 'y', 'armhf': 'y'}>
 CONFIG_CPU_RMAP                                 policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
 CONFIG_CPU_SPECTRE                              policy<{'armhf': 'y'}>
+CONFIG_CPU_SRSO                                 policy<{'amd64': 'y'}>
 CONFIG_CPU_SUP_AMD                              policy<{'amd64': 'y'}>
 CONFIG_CPU_SUP_CENTAUR                          policy<{'amd64': 'y'}>
 CONFIG_CPU_SUP_HYGON                            policy<{'amd64': 'y'}>
@@ -3546,9 +3555,6 @@ CONFIG_DEBUG_VM_PGTABLE                         policy<{'amd64': 'n', 'arm64': '
 CONFIG_DEBUG_WQ_FORCE_RR_CPU                    policy<{'amd64': 'n', 'arm64': 'n', 'armhf': 'n', 'ppc64el': 'n', 's390x': 'n'}>
 CONFIG_DEBUG_WW_MUTEX_SLOWPATH                  policy<{'amd64': 'n', 'arm64': 'n', 'armhf': 'n', 'ppc64el': 'n', 's390x': 'n'}>
 CONFIG_DEBUG_WX                                 policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
-CONFIG_DECNET                                   policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm', 's390x': 'n'}>
-CONFIG_DECNET_NF_GRABULATOR                     policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
-CONFIG_DECNET_ROUTER                            policy<{'amd64': 'n', 'arm64': 'n', 'armhf': 'n', 'ppc64el': 'n'}>
 CONFIG_DECOMPRESS_BZIP2                         policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
 CONFIG_DECOMPRESS_GZIP                          policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
 CONFIG_DECOMPRESS_LZ4                           policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
@@ -6554,7 +6560,7 @@ CONFIG_KEXEC                                    policy<{'amd64': 'y', 'arm64': '
 CONFIG_KEXEC_CORE                               policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
 CONFIG_KEXEC_ELF                                policy<{'ppc64el': 'y'}>
 CONFIG_KEXEC_FILE                               policy<{'amd64': 'y', 'arm64': 'y', 'ppc64el': 'y', 's390x': 'n'}>
-CONFIG_KEXEC_IMAGE_VERIFY_SIG                   policy<{'arm64': 'n'}>
+CONFIG_KEXEC_IMAGE_VERIFY_SIG                   policy<{'arm64': 'y'}>
 CONFIG_KEXEC_JUMP                               policy<{'amd64': 'y'}>
 CONFIG_KEXEC_SIG                                policy<{'amd64': 'y', 'arm64': 'y'}>
 CONFIG_KEXEC_SIG_FORCE                          policy<{'amd64': 'n'}>
@@ -11025,7 +11031,6 @@ CONFIG_SERIAL_SC16IS7XX_I2C                     policy<{'amd64': 'y', 'arm64': '
 CONFIG_SERIAL_SC16IS7XX_SPI                     policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y'}>
 CONFIG_SERIAL_SCCNXP                            policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'n'}>
 CONFIG_SERIAL_SCCNXP_CONSOLE                    policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y'}>
-CONFIG_SERIAL_SH_SCI                            policy<{'arm64': 'm', 'armhf': 'm'}>
 CONFIG_SERIAL_SH_SCI_DMA                        policy<{'arm64': 'y', 'armhf': 'y'}>
 CONFIG_SERIAL_SH_SCI_NR_UARTS                   policy<{'arm64': '2', 'armhf': '2'}>
 CONFIG_SERIAL_SIFIVE                            policy<{'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
