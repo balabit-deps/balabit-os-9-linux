@@ -222,7 +222,7 @@ do_flavour_header_package=true
 do_dtbs=false
 
 # FIPS check
-do_fips_checks=false
+do_fips_checks=true
 
 # Support parallel=<n> in DEB_BUILD_OPTIONS (see #209008)
 #
