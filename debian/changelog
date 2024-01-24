@@ -1,3 +1,9 @@
+linux (5.15.0-91.101bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Wed, 24 Jan 2024 14:50:26 +0100
+
 linux (5.15.0-91.101) jammy; urgency=medium
 
   * jammy/linux: 5.15.0-91.101 -proposed tracker (LP: #2043452)
@@ -439,6 +445,50 @@ linux (5.15.0-90.100) jammy; urgency=medium
 
  -- Stefan Bader <stefan.bader@canonical.com>  Mon, 30 Oct 2023 12:40:14 +0100
 
+linux (5.15.0-89.99bb2) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Wed, 17 Jan 2024 20:45:47 +0100
+
+linux (5.15.0-89.99bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Sat, 25 Nov 2023 03:31:51 +0000
+
+linux (5.15.0-89.99) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-89.99 -proposed tracker (LP: #2041949)
+
+  * CVE-2023-31085
+    - ubi: Refuse attaching if mtd's erasesize is 0
+
+  * CVE-2023-45871
+    - igb: set max size RX buffer when store bad packet is enabled
+
+  * CVE-2023-25775
+    - RDMA/irdma: Remove irdma_uk_mw_bind()
+    - RDMA/irdma: Remove irdma_sc_send_lsmm_nostag()
+    - RDMA/irdma: Remove irdma_cqp_up_map_cmd()
+    - RDMA/irdma: Remove irdma_get_hw_addr()
+    - RDMA/irdma: Make irdma_uk_cq_init() return a void
+    - RDMA/irdma: optimize rx path by removing unnecessary copy
+    - RDMA/irdma: Remove enum irdma_status_code
+    - RDMA/irdma: Remove excess error variables
+    - RDMA/irdma: Prevent zero-length STAG registration
+
+  * Packaging resync (LP: #1786013)
+    - [Packaging] update helper scripts
+
+ -- Thadeu Lima de Souza Cascardo <cascardo@canonical.com>  Mon, 30 Oct 2023 17:15:23 -0300
+
+linux (5.15.0-88.98bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Wed, 08 Nov 2023 18:16:51 +0100
+
 linux (5.15.0-88.98) jammy; urgency=medium
 
   * jammy/linux: 5.15.0-88.98 -proposed tracker (LP: #2038055)
@@ -867,6 +917,18 @@ linux (5.15.0-88.98) jammy; urgency=medium
     - [Packaging] update helper scripts
 
  -- Roxana Nicolescu <roxana.nicolescu@canonical.com>  Mon, 02 Oct 2023 15:40:31 +0200
+
+linux (5.15.0-87.97bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Sat, 21 Oct 2023 02:26:13 +0000
+
+linux (5.15.0-86.96bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Fri, 13 Oct 2023 21:58:40 +0200
 
 linux (5.15.0-86.96) jammy; urgency=medium
 
@@ -1882,6 +1944,18 @@ linux (5.15.0-85.95) jammy; urgency=medium
 
  -- Stefan Bader <stefan.bader@canonical.com>  Fri, 01 Sep 2023 14:52:39 +0200
 
+linux (5.15.0-84.93bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Sat, 23 Sep 2023 02:30:05 +0000
+
+linux (5.15.0-83.92bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Tue, 12 Sep 2023 23:23:52 +0200
+
 linux (5.15.0-83.92) jammy; urgency=medium
 
   * jammy/linux: 5.15.0-83.92 -proposed tracker (LP: #2031132)
@@ -2636,6 +2710,12 @@ linux (5.15.0-81.90) jammy; urgency=medium
     - net/sched: cls_fw: Fix improper refcount update leads to use-after-free
 
  -- Stefan Bader <stefan.bader@canonical.com>  Wed, 09 Aug 2023 16:35:58 +0200
+
+linux (5.15.0-82.91bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Wed, 30 Aug 2023 17:22:18 +0200
 
 linux (5.15.0-79.86) jammy; urgency=medium
 
@@ -4835,6 +4915,18 @@ linux (5.15.0-74.81) jammy; urgency=medium
 
  -- Stefan Bader <stefan.bader@canonical.com>  Fri, 12 May 2023 16:52:42 +0200
 
+linux (5.15.0-73.80bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Sat, 10 Jun 2023 02:25:09 +0000
+
+linux (5.15.0-72.79bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Thu, 18 May 2023 18:33:47 +0200
+
 linux (5.15.0-72.79) jammy; urgency=medium
 
   * jammy/linux: 5.15.0-72.79 -proposed tracker (LP: #2016548)
@@ -5261,6 +5353,12 @@ linux (5.15.0-72.79) jammy; urgency=medium
 
  -- Stefan Bader <stefan.bader@canonical.com>  Tue, 18 Apr 2023 16:42:38 +0200
 
+linux (5.15.0-71.78bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Sat, 29 Apr 2023 04:27:05 +0200
+
 linux (5.15.0-71.78) jammy; urgency=medium
 
   * jammy/linux: 5.15.0-71.78 -proposed tracker (LP: #2016820)
@@ -5274,6 +5372,12 @@ linux (5.15.0-71.78) jammy; urgency=medium
     - [Config]: Make sure CONFIG_NET_CLS_TCINDEX is not available
 
  -- Thadeu Lima de Souza Cascardo <cascardo@canonical.com>  Tue, 18 Apr 2023 05:37:02 -0300
+
+linux (5.15.0-70.77bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Tue, 25 Apr 2023 13:13:36 +0200
 
 linux (5.15.0-70.77) jammy; urgency=medium
 
@@ -5809,6 +5913,12 @@ linux (5.15.0-70.77) jammy; urgency=medium
     - selftests/ftrace: Fix bash specific "==" operator
 
  -- Stefan Bader <stefan.bader@canonical.com>  Tue, 21 Mar 2023 10:08:08 +0100
+
+linux (5.15.0-69.76bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Sat, 01 Apr 2023 02:35:52 +0000
 
 linux (5.15.0-69.76) jammy; urgency=medium
 
@@ -6960,6 +7070,12 @@ linux (5.15.0-68.75) jammy; urgency=medium
     - x86/bugs: Flush IBP in ib_prctl_set()
 
  -- Stefan Bader <stefan.bader@canonical.com>  Fri, 24 Feb 2023 11:44:57 +0100
+
+linux (5.15.0-67.74bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Thu, 02 Mar 2023 14:48:29 +0100
 
 linux (5.15.0-67.74) jammy; urgency=medium
 
@@ -10969,6 +11085,12 @@ linux (5.15.0-52.58) jammy; urgency=medium
     - SAUCE: wifi: mac80211: fix MBSSID parsing use-after-free
 
  -- Stefan Bader <stefan.bader@canonical.com>  Thu, 13 Oct 2022 09:40:20 +0200
+
+linux (5.15.0-50.56bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Sat, 15 Oct 2022 10:08:09 +0000
 
 linux (5.15.0-50.56) jammy; urgency=medium
 
