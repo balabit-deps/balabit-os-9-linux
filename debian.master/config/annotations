@@ -289,7 +289,7 @@ CONFIG_INTEGRITY_PLATFORM_KEYRING               policy<{'amd64': 'y', 'arm64': '
 CONFIG_INTEGRITY_PLATFORM_KEYRING               note<'Required for lockdown'>
 
 CONFIG_INTEL_IOMMU_DEFAULT_ON                   policy<{'amd64': 'n'}>
-CONFIG_INTEL_IOMMU_DEFAULT_ON                   note<'the IOMMU can trigger boot failures'>
+CONFIG_INTEL_IOMMU_DEFAULT_ON                   note<'LP: #1971699'>
 
 CONFIG_IOMMU_DEBUGFS                            policy<{'amd64': 'n', 'arm64': 'n', 'armhf': 'n', 'ppc64el': 'n', 's390x': 'n'}>
 CONFIG_IOMMU_DEBUGFS                            note<'Should not be enabled in production, LP #1861057'>
@@ -4191,7 +4191,6 @@ CONFIG_DWMAC_IMX8                               policy<{'arm64': 'm', 'armhf-gen
 CONFIG_DWMAC_INTEL                              policy<{'amd64': 'm'}>
 CONFIG_DWMAC_INTEL_PLAT                         policy<{'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_DWMAC_IPQ806X                            policy<{'arm64': 'm', 'armhf': 'm'}>
-CONFIG_DWMAC_LOONGSON                           policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_DWMAC_MEDIATEK                           policy<{'arm64': 'm', 'armhf': 'm'}>
 CONFIG_DWMAC_MESON                              policy<{'arm64': 'm', 'armhf': 'm'}>
 CONFIG_DWMAC_QCOM_ETHQOS                        policy<{'arm64': 'm', 'armhf': 'm'}>
@@ -7451,13 +7450,13 @@ CONFIG_MMC_REALTEK_PCI                          policy<{'amd64': 'm', 'arm64': '
 CONFIG_MMC_REALTEK_USB                          policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_MMC_RICOH_MMC                            policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y'}>
 CONFIG_MMC_SDHCI_ACPI                           policy<{'amd64': 'm', 'arm64': 'm'}>
-CONFIG_MMC_SDHCI_AM654                          policy<{'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
+CONFIG_MMC_SDHCI_AM654                          policy<{'arm64': 'm', 'armhf': '-', 'ppc64el': '-'}>
 CONFIG_MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER  policy<{'ppc64el': 'y'}>
 CONFIG_MMC_SDHCI_BRCMSTB                        policy<{'arm64': 'm'}>
 CONFIG_MMC_SDHCI_CADENCE                        policy<{'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_MMC_SDHCI_DOVE                           policy<{'armhf': 'm'}>
 CONFIG_MMC_SDHCI_ESDHC_IMX                      policy<{'arm64': 'm', 'armhf-generic': 'y'}>
-CONFIG_MMC_SDHCI_EXTERNAL_DMA                   policy<{'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y'}>
+CONFIG_MMC_SDHCI_EXTERNAL_DMA                   policy<{'arm64': '-', 'armhf': 'y', 'ppc64el': '-'}>
 CONFIG_MMC_SDHCI_F_SDH30                        policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_MMC_SDHCI_IO_ACCESSORS                   policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y'}>
 CONFIG_MMC_SDHCI_IPROC                          policy<{'arm64': 'm'}>
@@ -7470,7 +7469,7 @@ CONFIG_MMC_SDHCI_OF_DWCMSHC                     policy<{'arm64': 'm', 'armhf': '
 CONFIG_MMC_SDHCI_OF_ESDHC                       policy<{'arm64': 'm', 'armhf-generic': 'm', 'ppc64el': 'm'}>
 CONFIG_MMC_SDHCI_OF_HLWD                        policy<{'ppc64el': 'm'}>
 CONFIG_MMC_SDHCI_OF_SPARX5                      policy<{'arm64': 'm'}>
-CONFIG_MMC_SDHCI_OMAP                           policy<{'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
+CONFIG_MMC_SDHCI_OMAP                           policy<{'arm64': '-', 'armhf': 'm', 'ppc64el': '-'}>
 CONFIG_MMC_SDHCI_PCI                            policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_MMC_SDHCI_PXAV3                          policy<{'arm64': 'm', 'armhf': 'm'}>
 CONFIG_MMC_SDHCI_S3C                            policy<{'armhf': 'm'}>
@@ -12509,7 +12508,7 @@ CONFIG_TI_SCI_INTA_MSI_DOMAIN                   policy<{'arm64': 'y'}>
 CONFIG_TI_SCI_INTR_IRQCHIP                      policy<{'arm64': 'y'}>
 CONFIG_TI_SCI_PM_DOMAINS                        policy<{'arm64': 'm'}>
 CONFIG_TI_SCI_PROTOCOL                          policy<{'arm64': 'y'}>
-CONFIG_TI_SOC_THERMAL                           policy<{'arm64': 'n', 'armhf': 'm', 'ppc64el': 'n'}>
+CONFIG_TI_SOC_THERMAL                           policy<{'arm64': '-', 'armhf': 'm', 'ppc64el': '-'}>
 CONFIG_TI_ST                                    policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm', 's390x': 'm'}>
 CONFIG_TI_SYSC                                  policy<{'armhf': 'y'}>
 CONFIG_TI_SYSCON_CLK                            policy<{'arm64': 'y'}>
