@@ -10,6 +10,7 @@
 #include <linux/cdev.h>
 #include <linux/idr.h>
 #include <linux/pci.h>
+#include <linux/bitmap.h>
 #include <linux/perf_event.h>
 #include <uapi/linux/idxd.h>
 #include "registers.h"
@@ -50,6 +51,9 @@ enum idxd_type {
 
 #define IDXD_NAME_SIZE		128
 #define IDXD_PMU_EVENT_MAX	64
+
+#define IDXD_ENQCMDS_RETRIES		32
+#define IDXD_ENQCMDS_MAX_RETRIES	64
 
 struct idxd_device_driver {
 	const char *name;
@@ -164,6 +168,7 @@ struct idxd_dma_chan {
 struct idxd_wq {
 	void __iomem *portal;
 	u32 portal_offset;
+	unsigned int enqcmds_retries;
 	struct percpu_ref wq_active;
 	struct completion wq_dead;
 	struct idxd_dev idxd_dev;
@@ -181,6 +186,8 @@ struct idxd_wq {
 	enum idxd_wq_state state;
 	unsigned long flags;
 	union wqcfg *wqcfg;
+	unsigned long *opcap_bmap;
+
 	struct dsa_hw_desc **hw_descs;
 	int num_descs;
 	union {
@@ -241,6 +248,7 @@ struct idxd_driver_data {
 	struct device_type *dev_type;
 	int compl_size;
 	int align;
+	bool user_submission_safe;
 };
 
 struct idxd_device {
@@ -297,6 +305,10 @@ struct idxd_device {
 	int *int_handles;
 
 	struct idxd_pmu *idxd_pmu;
+
+	unsigned long *opcap_bmap;
+
+	bool user_submission_safe;
 };
 
 /* IDXD software descriptor */
@@ -573,6 +585,7 @@ int idxd_wq_init_percpu_ref(struct idxd_wq *wq);
 int idxd_submit_desc(struct idxd_wq *wq, struct idxd_desc *desc);
 struct idxd_desc *idxd_alloc_desc(struct idxd_wq *wq, enum idxd_op_type optype);
 void idxd_free_desc(struct idxd_wq *wq, struct idxd_desc *desc);
+int idxd_enqcmds(struct idxd_wq *wq, void __iomem *portal, const void *desc);
 
 /* dmaengine */
 int idxd_register_dma_device(struct idxd_device *idxd);

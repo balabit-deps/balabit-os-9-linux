@@ -4,9 +4,6 @@
 #define _IDXD_REGISTERS_H_
 
 /* PCI Config */
-#define PCI_DEVICE_ID_INTEL_DSA_SPR0	0x0b25
-#define PCI_DEVICE_ID_INTEL_IAX_SPR0	0x0cfe
-
 #define DEVICE_VERSION_1		0x100
 #define DEVICE_VERSION_2		0x200
 
@@ -55,7 +52,8 @@ union wq_cap_reg {
 		u64 priority:1;
 		u64 occupancy:1;
 		u64 occupancy_int:1;
-		u64 rsvd3:10;
+		u64 op_config:1;
+		u64 rsvd3:9;
 	};
 	u64 bits;
 } __packed;
@@ -90,6 +88,8 @@ union engine_cap_reg {
 struct opcap {
 	u64 bits[4];
 };
+
+#define IDXD_MAX_OPCAP_BITS		256U
 
 #define IDXD_OPCAP_OFFSET		0x40
 
@@ -348,8 +348,11 @@ union wqcfg {
 
 		/* bytes 28-31 */
 		u32 rsvd8;
+
+		/* bytes 32-63 */
+		u64 op_config[4];
 	};
-	u32 bits[8];
+	u32 bits[16];
 } __packed;
 
 #define WQCFG_PASID_IDX                2
