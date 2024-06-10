@@ -1,3 +1,16 @@
+linux (5.15.0-113.123) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-113.123 -proposed tracker (LP: #2068242)
+
+  * CVE-2024-26924
+    - netfilter: nft_set_pipapo: do not free live element
+
+  * CVE-2024-26643
+    - netfilter: nf_tables: mark set as dead when unbinding anonymous set with
+      timeout
+
+ -- Roxana Nicolescu <roxana.nicolescu@canonical.com>  Mon, 10 Jun 2024 09:55:36 +0200
+
 linux (5.15.0-112.122) jammy; urgency=medium
 
   * jammy/linux: 5.15.0-112.122 -proposed tracker (LP: #2065898)
