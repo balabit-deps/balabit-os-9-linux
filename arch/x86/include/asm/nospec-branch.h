@@ -220,6 +220,8 @@ extern void srso_alias_untrain_ret(void);
 extern void entry_untrain_ret(void);
 extern void entry_ibpb(void);
 
+extern void (*x86_return_thunk)(void);
+
 #ifdef CONFIG_X86_64
 extern void clear_bhb_loop(void);
 #endif
