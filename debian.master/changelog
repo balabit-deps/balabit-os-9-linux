@@ -1,3 +1,18 @@
+linux (5.15.0-124.134) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-124.134 -proposed tracker (LP: #2082176)
+
+  * CVE-2024-45016
+    - netem: fix return value if duplicate enqueue fails
+
+  * CVE-2024-38630
+    - watchdog: cpu5wdt.c: Fix use-after-free bug caused by cpu5wdt_trigger
+
+  * CVE-2024-27397
+    - netfilter: nf_tables: use timestamp to check for set element timeout
+
+ -- Manuel Diewald <manuel.diewald@canonical.com>  Fri, 27 Sep 2024 19:21:42 +0200
+
 linux (5.15.0-122.132bb1) jammy; urgency=medium
 
   * Balabit patched version
