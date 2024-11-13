@@ -47,6 +47,7 @@
 struct tls_decrypt_arg {
 	bool zc;
 	bool async;
+	bool async_done;
 };
 
 noinline void tls_err_abort(struct sock *sk, int err)
@@ -277,24 +278,30 @@ static int tls_do_decryption(struct sock *sk,
 					  tls_decrypt_done, skb);
 		atomic_inc(&ctx->decrypt_pending);
 	} else {
+		DECLARE_CRYPTO_WAIT(wait);
+
 		aead_request_set_callback(aead_req,
 					  CRYPTO_TFM_REQ_MAY_BACKLOG,
-					  crypto_req_done, &ctx->async_wait);
+					  crypto_req_done, &wait);
+		ret = crypto_aead_decrypt(aead_req);
+		if (ret == -EINPROGRESS || ret == -EBUSY)
+			ret = crypto_wait_req(ret, &wait);
+		return ret;
 	}
 
 	ret = crypto_aead_decrypt(aead_req);
+	if (ret == -EINPROGRESS)
+		return 0;
+
 	if (ret == -EBUSY) {
 		ret = tls_decrypt_async_wait(ctx);
-		ret = ret ?: -EINPROGRESS;
+		darg->async_done = true;
+		/* all completions have run, we're not doing async anymore */
+		darg->async = false;
+		return ret;
 	}
-	if (ret == -EINPROGRESS) {
-		if (darg->async)
-			return 0;
 
-		ret = crypto_wait_req(ret, &ctx->async_wait);
-	} else if (darg->async) {
-		atomic_dec(&ctx->decrypt_pending);
-	}
+	atomic_dec(&ctx->decrypt_pending);
 	darg->async = false;
 
 	return ret;
@@ -1501,10 +1508,8 @@ static int decrypt_internal(struct sock *sk, struct sk_buff *skb,
 	err = skb_copy_bits(skb, rxm->offset + TLS_HEADER_SIZE,
 			    iv + iv_offset + prot->salt_size,
 			    prot->iv_size);
-	if (err < 0) {
-		kfree(mem);
-		return err;
-	}
+	if (err < 0)
+		goto exit_free;
 	if (prot->version == TLS_1_3_VERSION ||
 	    prot->cipher_type == TLS_CIPHER_CHACHA20_POLY1305)
 		memcpy(iv + iv_offset, tls_ctx->rx.iv,
@@ -1525,10 +1530,8 @@ static int decrypt_internal(struct sock *sk, struct sk_buff *skb,
 	err = skb_to_sgvec(skb, &sgin[1],
 			   rxm->offset + prot->prepend_size,
 			   rxm->full_len - prot->prepend_size);
-	if (err < 0) {
-		kfree(mem);
-		return err;
-	}
+	if (err < 0)
+		goto exit_free;
 
 	if (n_sgout) {
 		if (out_iov) {
@@ -1555,13 +1558,21 @@ fallback_to_reg_recv:
 	/* Prepare and submit AEAD request */
 	err = tls_do_decryption(sk, skb, sgin, sgout, iv,
 				data_len, aead_req, darg);
+	if (err) {
+		if (darg->async_done)
+			return err;
+	}
+
 	if (darg->async)
+		return 0;
+
+	if (unlikely(darg->async_done))
 		return 0;
 
 	/* Release the pages in case iov was mapped to pages */
 	for (; pages > 0; pages--)
 		put_page(sg_page(&sgout[pages]));
-
+exit_free:
 	kfree(mem);
 	return err;
 }
