@@ -1,3 +1,14 @@
+linux (5.15.0-126.136) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-126.136 -proposed tracker (LP: #2086027)
+    - [Packaging] resync git-ubuntu-log
+
+  * Cannot detect audio sinks and sources in proposed kernel (LP: #2085082)
+    - soundwire: stream: Revert "soundwire: stream: fix programming slave ports
+      for non-continous port maps"
+
+ -- Stefan Bader <stefan.bader@canonical.com>  Wed, 06 Nov 2024 10:28:09 +0100
+
 linux (5.15.0-125.135bb1) jammy; urgency=medium
 
   * Balabit patched version
