@@ -1479,6 +1479,17 @@ next_step:
 					special_file(inode->i_mode))
 				continue;
 
+			if (f2fs_has_inline_data(inode)) {
+				iput(inode);
+				set_sbi_flag(sbi, SBI_NEED_FSCK);
+				printk_ratelimited("%sF2FS-fs (%s): "
+					"inode %lx has both inline_data flag and "
+					"data block, nid=%u, ofs_in_node=%u",
+					KERN_ERR, sbi->sb->s_id,
+					inode->i_ino, dni.nid, ofs_in_node);
+				continue;
+			}
+
 			if (!down_write_trylock(
 				&F2FS_I(inode)->i_gc_rwsem[WRITE])) {
 				iput(inode);

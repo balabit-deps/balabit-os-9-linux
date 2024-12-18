@@ -97,7 +97,10 @@ struct mlx5_flow_cmds {
 
 	int (*create_ns)(struct mlx5_flow_root_namespace *ns);
 	int (*destroy_ns)(struct mlx5_flow_root_namespace *ns);
-
+	int (*create_match_definer)(struct mlx5_flow_root_namespace *ns,
+				    u16 format_id, u32 *match_mask);
+	int (*destroy_match_definer)(struct mlx5_flow_root_namespace *ns,
+				     int definer_id);
 	u32 (*get_capabilities)(struct mlx5_flow_root_namespace *ns,
 				enum fs_flow_table_type ft_type);
 };
