@@ -635,6 +635,7 @@ struct hci_conn {
 	__u8		adv_instance;
 	__u16		handle;
 	__u16		state;
+	__u16		mtu;
 	__u8		mode;
 	__u8		type;
 	__u8		role;

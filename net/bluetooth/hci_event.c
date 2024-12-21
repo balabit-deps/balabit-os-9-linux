@@ -747,14 +747,14 @@ static void hci_cc_read_flow_control_mode(struct hci_dev *hdev,
 	hdev->flow_ctl_mode = rp->mode;
 }
 
-static void hci_cc_read_buffer_size(struct hci_dev *hdev, struct sk_buff *skb)
+static u8 hci_cc_read_buffer_size(struct hci_dev *hdev, struct sk_buff *skb)
 {
 	struct hci_rp_read_buffer_size *rp = (void *) skb->data;
 
 	BT_DBG("%s status 0x%2.2x", hdev->name, rp->status);
 
 	if (rp->status)
-		return;
+		return rp->status;
 
 	hdev->acl_mtu  = __le16_to_cpu(rp->acl_mtu);
 	hdev->sco_mtu  = rp->sco_mtu;
@@ -771,6 +771,11 @@ static void hci_cc_read_buffer_size(struct hci_dev *hdev, struct sk_buff *skb)
 
 	BT_DBG("%s acl mtu %d:%d sco mtu %d:%d", hdev->name, hdev->acl_mtu,
 	       hdev->acl_pkts, hdev->sco_mtu, hdev->sco_pkts);
+
+	if (!hdev->acl_mtu || !hdev->acl_pkts)
+		return HCI_ERROR_INVALID_PARAMETERS;
+
+	return rp->status;
 }
 
 static void hci_cc_read_bd_addr(struct hci_dev *hdev, struct sk_buff *skb)
@@ -1035,15 +1040,15 @@ static void hci_cc_pin_code_neg_reply(struct hci_dev *hdev, struct sk_buff *skb)
 	hci_dev_unlock(hdev);
 }
 
-static void hci_cc_le_read_buffer_size(struct hci_dev *hdev,
-				       struct sk_buff *skb)
+static u8 hci_cc_le_read_buffer_size(struct hci_dev *hdev,
+				     struct sk_buff *skb)
 {
 	struct hci_rp_le_read_buffer_size *rp = (void *) skb->data;
 
 	BT_DBG("%s status 0x%2.2x", hdev->name, rp->status);
 
 	if (rp->status)
-		return;
+		return rp->status;
 
 	hdev->le_mtu = __le16_to_cpu(rp->le_mtu);
 	hdev->le_pkts = rp->le_max_pkt;
@@ -1051,6 +1056,11 @@ static void hci_cc_le_read_buffer_size(struct hci_dev *hdev,
 	hdev->le_cnt = hdev->le_pkts;
 
 	BT_DBG("%s le mtu %d:%d", hdev->name, hdev->le_mtu, hdev->le_pkts);
+
+	if (hdev->le_mtu && hdev->le_mtu < HCI_MIN_LE_MTU)
+		return HCI_ERROR_INVALID_PARAMETERS;
+
+	return rp->status;
 }
 
 static void hci_cc_le_read_local_features(struct hci_dev *hdev,
@@ -1960,8 +1970,8 @@ static void hci_cs_create_conn(struct hci_dev *hdev, __u8 status)
 		if (!conn) {
 			conn = hci_conn_add(hdev, ACL_LINK, &cp->bdaddr,
 					    HCI_ROLE_MASTER);
-			if (!conn)
-				bt_dev_err(hdev, "no memory for new connection");
+			if (IS_ERR(conn))
+				bt_dev_err(hdev, "connection err: %ld", PTR_ERR(conn));
 		}
 	}
 
@@ -2688,8 +2698,8 @@ static void hci_conn_complete_evt(struct hci_dev *hdev, struct sk_buff *skb)
 						      BDADDR_BREDR)) {
 			conn = hci_conn_add(hdev, ev->link_type, &ev->bdaddr,
 					    HCI_ROLE_SLAVE);
-			if (!conn) {
-				bt_dev_err(hdev, "no memory for new conn");
+			if (IS_ERR(conn)) {
+				bt_dev_err(hdev, "connection err: %ld", PTR_ERR(conn));
 				goto unlock;
 			}
 		} else {
@@ -2871,8 +2881,8 @@ static void hci_conn_request_evt(struct hci_dev *hdev, struct sk_buff *skb)
 	if (!conn) {
 		conn = hci_conn_add(hdev, ev->link_type, &ev->bdaddr,
 				    HCI_ROLE_SLAVE);
-		if (!conn) {
-			bt_dev_err(hdev, "no memory for new connection");
+		if (IS_ERR(conn)) {
+			bt_dev_err(hdev, "connection err: %ld", PTR_ERR(conn));
 			goto unlock;
 		}
 	}
@@ -3527,7 +3537,7 @@ static void hci_cmd_complete_evt(struct hci_dev *hdev, struct sk_buff *skb,
 		break;
 
 	case HCI_OP_READ_BUFFER_SIZE:
-		hci_cc_read_buffer_size(hdev, skb);
+		*status = hci_cc_read_buffer_size(hdev, skb);
 		break;
 
 	case HCI_OP_READ_BD_ADDR:
@@ -3599,7 +3609,7 @@ static void hci_cmd_complete_evt(struct hci_dev *hdev, struct sk_buff *skb,
 		break;
 
 	case HCI_OP_LE_READ_BUFFER_SIZE:
-		hci_cc_le_read_buffer_size(hdev, skb);
+		*status = hci_cc_le_read_buffer_size(hdev, skb);
 		break;
 
 	case HCI_OP_LE_READ_LOCAL_FEATURES:
@@ -5323,8 +5333,8 @@ static void le_conn_complete_evt(struct hci_dev *hdev, u8 status,
 	conn = hci_lookup_le_connect(hdev);
 	if (!conn) {
 		conn = hci_conn_add(hdev, LE_LINK, bdaddr, role);
-		if (!conn) {
-			bt_dev_err(hdev, "no memory for new connection");
+		if (IS_ERR(conn)) {
+			bt_dev_err(hdev, "connection err: %ld", PTR_ERR(conn));
 			goto unlock;
 		}
 
