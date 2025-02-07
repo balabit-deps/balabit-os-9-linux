@@ -594,7 +594,7 @@ static int nft_mapelem_deactivate(const struct nft_ctx *ctx,
 				  const struct nft_set_iter *iter,
 				  struct nft_set_elem *elem)
 {
-	struct nft_set_ext *ext = nft_set_elem_ext(set, elem);
+	struct nft_set_ext *ext = nft_set_elem_ext(set, elem->priv);
 
 	if (!nft_set_elem_active(ext, iter->genmask))
 		return 0;
@@ -5040,7 +5040,7 @@ static int nf_tables_bind_check_setelem(const struct nft_ctx *ctx,
 					const struct nft_set_iter *iter,
 					struct nft_set_elem *elem)
 {
-	const struct nft_set_ext *ext = nft_set_elem_ext(set, elem);
+	const struct nft_set_ext *ext = nft_set_elem_ext(set, elem->priv);
 
 	if (!nft_set_elem_active(ext, iter->genmask))
 		return 0;
@@ -5139,7 +5139,7 @@ static int nft_mapelem_activate(const struct nft_ctx *ctx,
 				const struct nft_set_iter *iter,
 				struct nft_set_elem *elem)
 {
-	struct nft_set_ext *ext = nft_set_elem_ext(set, elem);
+	struct nft_set_ext *ext = nft_set_elem_ext(set, elem->priv);
 
 	/* called from abort path, reverse check to undo changes. */
 	if (nft_set_elem_active(ext, iter->genmask))
@@ -5164,8 +5164,8 @@ static void nft_map_catchall_activate(const struct nft_ctx *ctx,
 		if (!nft_set_elem_active(ext, genmask))
 			continue;
 
-		elem.priv = catchall->elem;
 		nft_clear(ctx->net, ext);
+		elem.priv = catchall->elem;
 		nft_setelem_data_activate(ctx->net, set, &elem);
 		break;
 	}
@@ -6799,7 +6799,7 @@ static int nft_setelem_flush(const struct nft_ctx *ctx,
 			     const struct nft_set_iter *iter,
 			     struct nft_set_elem *elem)
 {
-	const struct nft_set_ext *ext = nft_set_elem_ext(set, elem);
+	const struct nft_set_ext *ext = nft_set_elem_ext(set, elem->priv);
 	struct nft_trans *trans;
 	int err;
 
