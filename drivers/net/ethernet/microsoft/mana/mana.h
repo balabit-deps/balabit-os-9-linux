@@ -77,6 +77,8 @@ struct mana_txq {
 	atomic_t pending_sends;
 
 	struct mana_stats stats;
+
+	bool napi_initialized;
 };
 
 /* skb data and frags dma mappings */
