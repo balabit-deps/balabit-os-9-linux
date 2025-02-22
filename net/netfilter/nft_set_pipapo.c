@@ -2073,7 +2073,6 @@ static void nft_pipapo_walk(const struct nft_ctx *ctx, struct nft_set *set,
 
 		e = f->mt[r].e;
 
-
 		elem.priv = e;
 
 		iter->err = iter->fn(ctx, set, iter, &elem);

@@ -982,7 +982,7 @@ static int trc_inspect_reader(struct task_struct *t, void *arg)
 	// holdout list.
 	t->trc_reader_checked = nesting >= 0;
 	if (nesting <= 0)
-		return !nesting;  // If in QS, done, otherwise try again later.
+		return nesting ? -EINVAL : 0;  // If in QS, done, otherwise try again later.
 
 	// The task is in a read-side critical section, so set up its
 	// state so that it will awaken the grace-period kthread upon exit
@@ -1090,7 +1090,7 @@ static void rcu_tasks_trace_postscan(struct list_head *hop)
 {
 	int cpu;
 
-	for_each_possible_cpu(cpu)
+	for_each_online_cpu(cpu)
 		rcu_tasks_trace_pertask(idle_task(cpu), hop);
 
 	// Re-enable CPU hotplug now that the tasklist scan has completed.
