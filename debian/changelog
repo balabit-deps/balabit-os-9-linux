@@ -1,3 +1,16 @@
+linux (5.15.0-134.145) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-134.145 -proposed tracker (LP: #2097944)
+
+  * Packaging resync (LP: #1786013)
+    - [Packaging] debian.master/dkms-versions -- update from kernel-versions
+      (main/s2025.01.13)
+
+  * CVE-2024-56672
+    - blk-cgroup: Fix UAF in blkcg_unpin_online()
+
+ -- Manuel Diewald <manuel.diewald@canonical.com>  Wed, 12 Feb 2025 19:47:13 +0100
+
 linux (5.15.0-133.144bb1) jammy; urgency=medium
 
   * Balabit patched version
