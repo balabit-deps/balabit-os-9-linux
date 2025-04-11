@@ -1,3 +1,18 @@
+linux (5.15.0-139.149) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-139.149 -proposed tracker (LP: #2107038)
+
+  * Packaging resync (LP: #1786013)
+    - [Packaging] update annotations scripts
+
+  * CVE-2023-52664
+    - net: atlantic: eliminate double free in error handling logic
+
+  * CVE-2023-52927
+    - netfilter: allow exp not to be removed in nf_ct_find_expectation
+
+ -- Manuel Diewald <manuel.diewald@canonical.com>  Fri, 11 Apr 2025 22:45:01 +0200
+
 linux (5.15.0-138.148) jammy; urgency=medium
 
   * jammy/linux: 5.15.0-138.148 -proposed tracker (LP: #2102587)
