@@ -2107,6 +2107,7 @@ CONFIG_BLK_WBT_MQ                               policy<{'amd64': 'y', 'arm64': '
 CONFIG_BLOCK                                    policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
 CONFIG_BLOCK_COMPAT                             policy<{'amd64': 'y', 'arm64': 'y', 'ppc64el': 'y', 's390x': 'y'}>
 CONFIG_BLOCK_HOLDER_DEPRECATED                  policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
+CONFIG_BLOCK_LEGACY_AUTOLOAD                    policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
 CONFIG_BL_SWITCHER                              policy<{'armhf': 'y'}>
 CONFIG_BL_SWITCHER_DUMMY_IF                     policy<{'armhf': 'm'}>
 CONFIG_BMA220                                   policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
@@ -6596,6 +6597,7 @@ CONFIG_KEYS_REQUEST_CACHE                       policy<{'amd64': 'y', 'arm64': '
 CONFIG_KEY_DH_OPERATIONS                        policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
 CONFIG_KEY_NOTIFICATIONS                        policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
 CONFIG_KFENCE                                   policy<{'amd64': 'y', 'arm64': 'y', 's390x': 'y'}>
+CONFIG_KFENCE_DEFERRABLE                        policy<{'amd64': 'n', 'arm64': 'n', 's390x': 'n'}>
 CONFIG_KFENCE_NUM_OBJECTS                       policy<{'amd64': '255', 'arm64': '255', 's390x': '255'}>
 CONFIG_KFENCE_SAMPLE_INTERVAL                   policy<{'amd64': '0', 'arm64': '0', 's390x': '0'}>
 CONFIG_KFENCE_STRESS_TEST_FAULTS                policy<{'amd64': '0', 'arm64': '0', 's390x': '0'}>
