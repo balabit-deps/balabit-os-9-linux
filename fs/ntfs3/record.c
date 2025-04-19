@@ -215,24 +215,20 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
 
 		attr = Add2Ptr(rec, off);
 	} else {
-		/* Check if input attr inside record. */
+		/*
+		 * We don't need to check previous attr here. There is
+		 * a bounds checking in the previous round.
+		 */
 		off = PtrOffset(rec, attr);
-		if (off >= used)
-			return NULL;
 
 		asize = le32_to_cpu(attr->size);
-		if (asize < SIZEOF_RESIDENT) {
-			/* Impossible 'cause we should not return such attribute. */
-			return NULL;
-		}
 
 		attr = Add2Ptr(attr, asize);
 		off += asize;
 	}
 
-	asize = le32_to_cpu(attr->size);
-
 	/* Can we use the first field (attr->type). */
+	/* NOTE: this code also checks attr->size availability. */
 	if (off + 8 > used) {
 		static_assert(ALIGN(sizeof(enum ATTR_TYPE), 8) == 8);
 		return NULL;
@@ -247,6 +243,8 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
 	t32 = le32_to_cpu(attr->type);
 	if ((t32 & 0xf) || (t32 > 0x100))
 		return NULL;
+
+	asize = le32_to_cpu(attr->size);
 
 	/* Check overflow and boundary. */
 	if (off + asize < off || off + asize > used)
@@ -275,6 +273,10 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
 	}
 
 	/* Check some nonresident fields. */
+	/* Can we use memory including attr->nres.valid_size? */
+	if (asize < SIZEOF_NONRESIDENT)
+		return NULL;
+
 	if (attr->name_len &&
 	    le16_to_cpu(attr->name_off) + sizeof(short) * attr->name_len >
 		    le16_to_cpu(attr->nres.run_off)) {
@@ -282,12 +284,9 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
 	}
 
 	if (attr->nres.svcn || !is_attr_ext(attr)) {
-		if (asize + 8 < SIZEOF_NONRESIDENT)
-			return NULL;
-
 		if (attr->nres.c_unit)
 			return NULL;
-	} else if (asize + 8 < SIZEOF_NONRESIDENT_EX)
+	} else if (asize < SIZEOF_NONRESIDENT_EX)
 		return NULL;
 
 	return attr;
