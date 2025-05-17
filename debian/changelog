@@ -1,3 +1,22 @@
+linux (5.15.0-141.151) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-141.151 -proposed tracker (LP: #2111052)
+
+  * Packaging resync (LP: #1786013)
+    - [Packaging] update annotations scripts
+
+  * CVE-2024-56608
+    - drm/amd/display: Fix out-of-bounds access in 'dcn21_link_encoder_create'
+
+  * CVE-2024-53168
+    - net: make sock_inuse_add() available
+    - sunrpc: fix one UAF issue caused by sunrpc kernel tcp socket
+
+  * CVE-2024-56551
+    - drm/amdgpu: fix usage slab after free
+
+ -- Manuel Diewald <manuel.diewald@canonical.com>  Sat, 17 May 2025 22:28:31 +0200
+
 linux (5.15.0-140.150) jammy; urgency=medium
 
   * jammy/linux: 5.15.0-140.150 -proposed tracker (LP: #2106996)
