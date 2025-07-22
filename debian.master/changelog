@@ -1,3 +1,25 @@
+linux (5.15.0-151.161) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-151.161 -proposed tracker (LP: #2117499)
+
+  * raid10: block discard causes a NULL pointer dereference after
+    5.15.0-144-generic (LP: #2117395)
+    - md: move initialization and destruction of 'io_acct_set' to md.c
+
+ -- Stefan Bader <stefan.bader@canonical.com>  Tue, 22 Jul 2025 15:59:16 +0200
+
+linux (5.15.0-145.158) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-145.158 -proposed tracker (LP: #2116458)
+
+  * CVE-2025-38083
+    - net_sched: prio: fix a race in prio_tune()
+
+  * CVE-2024-50073
+    - tty: n_gsm: Fix use-after-free in gsm_cleanup_mux
+
+ -- Manuel Diewald <manuel.diewald@canonical.com>  Fri, 11 Jul 2025 15:14:57 +0200
+
 linux (5.15.0-144.157) jammy; urgency=medium
 
   * jammy/linux: 5.15.0-144.157 -proposed tracker (LP: #2114581)
