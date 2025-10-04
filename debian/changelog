@@ -1,3 +1,23 @@
+linux (5.15.0-157.167) jammy; urgency=medium
+
+  * jammy/linux: 5.15.0-157.167 -proposed tracker (LP: #2124010)
+
+  * Packaging resync (LP: #1786013)
+    - [Packaging] resync git-ubuntu-log
+
+  * CVE-2025-38477
+    - net/sched: sch_qfq: Fix race condition on qfq_aggregate
+    - net/sched: sch_qfq: Avoid triggering might_sleep in atomic context in
+      qfq_delete_class
+
+  * CVE-2025-38617
+    - net/packet: fix a race in packet_set_ring() and packet_notifier()
+
+  * CVE-2025-38618
+    - vsock: Do not allow binding to VMADDR_PORT_ANY
+
+ -- Manuel Diewald <manuel.diewald@canonical.com>  Wed, 17 Sep 2025 21:47:09 +0200
+
 linux (5.15.0-156.166bb1) jammy; urgency=medium
 
   * Balabit patched version
