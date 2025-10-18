@@ -1,15 +1,32 @@
-linux (5.15.0-157.167bb1) jammy; urgency=medium
+linux (5.15.0-160.170) jammy; urgency=medium
 
-  * Balabit patched version
+  * jammy/linux: 5.15.0-160.170 -proposed tracker (LP: #2126548)
 
- -- Balabit Platform Team <devnull@dev.null>  Sat, 04 Oct 2025 08:23:12 +0000
+  * [Regression Updates] System hangs when loading audit rules
+    (5.15.0-156.166) (LP: #2126434)
+    - netlink: avoid infinite retry looping in netlink_unicast()
 
-linux (5.15.0-157.167) jammy; urgency=medium
+ -- Stefan Bader <stefan.bader@canonical.com>  Wed, 01 Oct 2025 11:49:04 +0200
 
-  * jammy/linux: 5.15.0-157.167 -proposed tracker (LP: #2124010)
+linux (5.15.0-158.168) jammy; urgency=medium
 
-  * Packaging resync (LP: #1786013)
-    - [Packaging] resync git-ubuntu-log
+  * jammy/linux: 5.15.0-158.168 -proposed tracker (LP: #2124104)
+
+  * [UBUNTU 22.04] s390/pci: Handle PCI error codes other than 0x3a
+    (LP: #2120344)
+    - s390/pci: Handle PCI error codes other than 0x3a
+
+  * sources list generation using dwarfdump takes up to 0.5hr in build process
+    (LP: #2104911)
+    - [Packaging] Don't generate list of source files
+
+  * CVE-2024-26700
+    - drm/amd/display: Fix MST Null Ptr for RV
+
+  * CVE-2023-52593
+    - wifi: wfx: fix possible NULL pointer dereference in wfx_set_mfp_ap()
+    - wifi: wfx: fix memory leak when starting AP
+    - wifi: wfx: repair open network AP mode
 
   * CVE-2025-38477
     - net/sched: sch_qfq: Fix race condition on qfq_aggregate
@@ -22,7 +39,16 @@ linux (5.15.0-157.167) jammy; urgency=medium
   * CVE-2025-38618
     - vsock: Do not allow binding to VMADDR_PORT_ANY
 
- -- Manuel Diewald <manuel.diewald@canonical.com>  Wed, 17 Sep 2025 21:47:09 +0200
+  * Packaging resync (LP: #1786013)
+    - [Packaging] resync git-ubuntu-log
+
+ -- Stefan Bader <stefan.bader@canonical.com>  Tue, 16 Sep 2025 16:14:00 +0200
+
+linux (5.15.0-157.167bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Sat, 04 Oct 2025 08:23:12 +0000
 
 linux (5.15.0-156.166bb1) jammy; urgency=medium
 
