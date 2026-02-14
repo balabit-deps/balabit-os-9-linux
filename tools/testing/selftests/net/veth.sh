@@ -91,10 +91,10 @@ chk_channels() {
 		grep Combined: | tail -n 1 | awk '{print $2}'`
 
 	printf "%-60s" "$msg"
-	if [ "$cur_rx" = "$rx" -a "$cur_tx" = "$tx" -a "$cur_combined" = "n/a" ]; then
+	if [ "$cur_rx" = "$rx" -a "$cur_tx" = "$tx" ] && [ "$cur_combined" = "n/a" -o "$cur_combined" = "0" ]; then
 		echo " ok "
 	else
-		echo " fail rx:$rx:$cur_rx tx:$tx:$cur_tx combined:n/a:$cur_combined"
+		echo " fail rx:$rx:$cur_rx tx:$tx:$cur_tx combined:$cur_combined"
 	fi
 }
 
@@ -246,6 +246,21 @@ chk_gro "        - aggregation with TSO off" 1
 cleanup
 
 create_ns
+ip -n $NS_DST link set dev veth$DST up
+ip -n $NS_DST link set dev veth$DST xdp object ../bpf/xdp_dummy.o section xdp
+ip netns exec $NS_DST ethtool -K veth$DST gro on
+chk_gro_flag "gro vs xdp while down - gro flag on" $DST on
+ip -n $NS_DST link set dev veth$DST down
+chk_gro_flag "                      - after down" $DST on
+ip -n $NS_DST link set dev veth$DST xdp off
+chk_gro_flag "                      - after xdp off" $DST on
+ip -n $NS_DST link set dev veth$DST up
+chk_gro_flag "                      - after up" $DST on
+ip -n $NS_SRC link set dev veth$SRC xdp object ../bpf/xdp_dummy.o section xdp
+chk_gro_flag "                      - after peer xdp" $DST on
+cleanup
+
+create_ns
 chk_channels "default channels" $DST 1 1
 
 ip -n $NS_DST link set dev veth$DST down
@@ -312,11 +327,14 @@ if [ $CPUS -gt 2 ]; then
 fi
 
 ip -n $NS_DST link set dev veth$DST xdp object ../bpf/xdp_dummy.o section xdp 2>/dev/null
-chk_gro_flag "with xdp attached - gro flag" $DST on
+chk_gro_flag "with xdp attached - gro flag" $DST off
 chk_gro_flag "        - peer gro flag" $SRC off
 chk_tso_flag "        - tso flag" $SRC off
 chk_tso_flag "        - peer tso flag" $DST on
 ip netns exec $NS_DST ethtool -K veth$DST rx-udp-gro-forwarding on
+chk_gro "        - no aggregation" 10
+ip netns exec $NS_DST ethtool -K veth$DST gro on
+chk_gro_flag "        - gro flag with GRO on" $DST on
 chk_gro "        - aggregation" 1
 
 
