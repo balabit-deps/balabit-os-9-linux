@@ -1,3 +1,9 @@
+linux (5.15.0-173.183bb1) jammy; urgency=medium
+
+  * Balabit patched version
+
+ -- Balabit Platform Team <devnull@dev.null>  Sat, 14 Mar 2026 10:22:57 +0100
+
 linux (5.15.0-173.183) jammy; urgency=medium
 
   * Miscellaneous upstream changes
