@@ -1515,6 +1515,7 @@ CONFIG_ARM64_ERRATUM_2441007                    policy<{'arm64': 'y'}>
 CONFIG_ARM64_ERRATUM_2441009                    policy<{'arm64': 'y'}>
 CONFIG_ARM64_ERRATUM_2457168                    policy<{'arm64': 'y'}>
 CONFIG_ARM64_ERRATUM_3194386                    policy<{'arm64': 'y'}>
+CONFIG_ARM64_ERRATUM_4118414                    policy<{'arm64': 'y'}>
 CONFIG_ARM64_ERRATUM_819472                     policy<{'arm64': 'y'}>
 CONFIG_ARM64_ERRATUM_824069                     policy<{'arm64': 'y'}>
 CONFIG_ARM64_ERRATUM_826319                     policy<{'arm64': 'y'}>
@@ -3294,7 +3295,6 @@ CONFIG_CRYPTO_DEV_SP_CCP                        policy<{'amd64': 'y', 'arm64': '
 CONFIG_CRYPTO_DEV_SP_PSP                        policy<{'amd64': 'y'}>
 CONFIG_CRYPTO_DEV_SUN4I_SS                      policy<{'arm64': 'm'}>
 CONFIG_CRYPTO_DEV_SUN4I_SS_DEBUG                policy<{'arm64': 'n'}>
-CONFIG_CRYPTO_DEV_SUN4I_SS_PRNG                 policy<{'arm64': 'y'}>
 CONFIG_CRYPTO_DEV_SUN8I_CE                      policy<{'arm64': 'm'}>
 CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG                policy<{'arm64': 'n'}>
 CONFIG_CRYPTO_DEV_SUN8I_CE_HASH                 policy<{'arm64': 'y'}>
@@ -5776,6 +5776,7 @@ CONFIG_IIO_CROS_EC_SENSORS_CORE                 policy<{'amd64': 'm', 'arm64': '
 CONFIG_IIO_CROS_EC_SENSORS_LID_ANGLE            policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm'}>
 CONFIG_IIO_HRTIMER_TRIGGER                      policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_IIO_INTERRUPT_TRIGGER                    policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
+CONFIG_IIO_INV_SENSORS_TIMESTAMP                policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_IIO_KFIFO_BUF                            policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_IIO_MS_SENSORS_I2C                       policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_IIO_MUX                                  policy<{'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
@@ -11355,6 +11356,7 @@ CONFIG_SND_SEQ_HRTIMER_DEFAULT                  policy<{'amd64': 'y', 'arm64': '
 CONFIG_SND_SEQ_MIDI                             policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_SND_SEQ_MIDI_EMUL                        policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_SND_SEQ_MIDI_EVENT                       policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
+CONFIG_SND_SEQ_UMP                              policy<{'amd64': 'n', 'arm64': 'n', 'armhf': 'n', 'ppc64el': 'n'}>
 CONFIG_SND_SEQ_VIRMIDI                          policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_SND_SERIAL_U16550                        policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>
 CONFIG_SND_SIMPLE_CARD                          policy<{'amd64': 'm', 'arm64': 'm', 'armhf': 'm', 'ppc64el': 'm'}>

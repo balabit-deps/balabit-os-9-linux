@@ -72,7 +72,18 @@ out:
 	return 0;
 }
 
-static int proc_fdinfo_access_allowed(struct inode *inode)
+static int seq_fdinfo_open(struct inode *inode, struct file *file)
+{
+	return single_open(file, seq_show, inode);
+}
+
+/**
+ * Shared /proc/pid/fdinfo and /proc/pid/fdinfo/fd permission helper to ensure
+ * that the current task has PTRACE_MODE_READ in addition to the normal
+ * POSIX-like checks.
+ */
+static int proc_fdinfo_permission(struct user_namespace *mnt_userns,
+				  struct inode *inode, int mask)
 {
 	bool allowed = false;
 	struct task_struct *task = get_proc_task(inode);
@@ -86,18 +97,13 @@ static int proc_fdinfo_access_allowed(struct inode *inode)
 	if (!allowed)
 		return -EACCES;
 
-	return 0;
+	return generic_permission(mnt_userns, inode, mask);
 }
 
-static int seq_fdinfo_open(struct inode *inode, struct file *file)
-{
-	int ret = proc_fdinfo_access_allowed(inode);
-
-	if (ret)
-		return ret;
-
-	return single_open(file, seq_show, inode);
-}
+static const struct inode_operations proc_fdinfo_file_inode_operations = {
+	.permission	= proc_fdinfo_permission,
+	.setattr	= proc_nochmod_setattr,
+};
 
 static const struct file_operations proc_fdinfo_file_operations = {
 	.open		= seq_fdinfo_open,
@@ -164,24 +170,19 @@ static const struct dentry_operations tid_fd_dentry_operations = {
 	.d_delete	= pid_delete_dentry,
 };
 
-static int proc_fd_link(struct dentry *dentry, struct path *path)
+static int proc_fd_link(struct dentry *dentry, struct path *path,
+			struct task_struct *task)
 {
-	struct task_struct *task;
 	int ret = -ENOENT;
+	unsigned int fd = proc_fd(d_inode(dentry));
+	struct file *fd_file;
 
-	task = get_proc_task(d_inode(dentry));
-	if (task) {
-		unsigned int fd = proc_fd(d_inode(dentry));
-		struct file *fd_file;
-
-		fd_file = fget_task(task, fd);
-		if (fd_file) {
-			*path = fd_file->f_path;
-			path_get(&fd_file->f_path);
-			ret = 0;
-			fput(fd_file);
-		}
-		put_task_struct(task);
+	fd_file = fget_task(task, fd);
+	if (fd_file) {
+		*path = fd_file->f_path;
+		path_get(&fd_file->f_path);
+		ret = 0;
+		fput(fd_file);
 	}
 
 	return ret;
@@ -212,8 +213,8 @@ static struct dentry *proc_fd_instantiate(struct dentry *dentry,
 	ei->op.proc_get_link = proc_fd_link;
 	tid_fd_update_inode(task, inode, data->mode);
 
-	d_set_d_op(dentry, &tid_fd_dentry_operations);
-	return d_splice_alias(inode, dentry);
+	return proc_splice_unmountable(inode, dentry,
+				       &tid_fd_dentry_operations);
 }
 
 static struct dentry *proc_lookupfd_common(struct inode *dir,
@@ -279,14 +280,14 @@ out:
 	return 0;
 }
 
-static int proc_readfd(struct file *file, struct dir_context *ctx)
+static int proc_fd_iterate(struct file *file, struct dir_context *ctx)
 {
 	return proc_readfd_common(file, ctx, proc_fd_instantiate);
 }
 
 const struct file_operations proc_fd_operations = {
 	.read		= generic_read_dir,
-	.iterate_shared	= proc_readfd,
+	.iterate_shared	= proc_fd_iterate,
 	.llseek		= generic_file_llseek,
 };
 
@@ -322,7 +323,7 @@ int proc_fd_permission(struct user_namespace *mnt_userns,
 const struct inode_operations proc_fd_inode_operations = {
 	.lookup		= proc_lookupfd,
 	.permission	= proc_fd_permission,
-	.setattr	= proc_setattr,
+	.setattr	= proc_nochmod_setattr,
 };
 
 static struct dentry *proc_fdinfo_instantiate(struct dentry *dentry,
@@ -339,11 +340,13 @@ static struct dentry *proc_fdinfo_instantiate(struct dentry *dentry,
 	ei = PROC_I(inode);
 	ei->fd = data->fd;
 
+	inode->i_op = &proc_fdinfo_file_inode_operations;
+
 	inode->i_fop = &proc_fdinfo_file_operations;
 	tid_fd_update_inode(task, inode, 0);
 
-	d_set_d_op(dentry, &tid_fd_dentry_operations);
-	return d_splice_alias(inode, dentry);
+	return proc_splice_unmountable(inode, dentry,
+				       &tid_fd_dentry_operations);
 }
 
 static struct dentry *
@@ -352,30 +355,20 @@ proc_lookupfdinfo(struct inode *dir, struct dentry *dentry, unsigned int flags)
 	return proc_lookupfd_common(dir, dentry, proc_fdinfo_instantiate);
 }
 
-static int proc_readfdinfo(struct file *file, struct dir_context *ctx)
+static int proc_fdinfo_iterate(struct file *file, struct dir_context *ctx)
 {
 	return proc_readfd_common(file, ctx,
 				  proc_fdinfo_instantiate);
 }
 
-static int proc_open_fdinfo(struct inode *inode, struct file *file)
-{
-	int ret = proc_fdinfo_access_allowed(inode);
-
-	if (ret)
-		return ret;
-
-	return 0;
-}
-
 const struct inode_operations proc_fdinfo_inode_operations = {
 	.lookup		= proc_lookupfdinfo,
-	.setattr	= proc_setattr,
+	.permission	= proc_fdinfo_permission,
+	.setattr	= proc_nochmod_setattr,
 };
 
 const struct file_operations proc_fdinfo_operations = {
-	.open		= proc_open_fdinfo,
 	.read		= generic_read_dir,
-	.iterate_shared	= proc_readfdinfo,
+	.iterate_shared	= proc_fdinfo_iterate,
 	.llseek		= generic_file_llseek,
 };
